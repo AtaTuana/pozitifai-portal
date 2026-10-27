@@ -1,0 +1,25 @@
+:root {
+  font-family: 'Inter', 'SF Pro Display', 'Segoe UI Variable', 'Segoe UI', sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --page-gutter: clamp(20px, 3.35vw, 64px);
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --background: #eceeef;
+  --foreground: #202325;
+  --muted: #62676c;
+  --glass-border: rgb(255 255 255 / 70%);
+  --glass-fallback: rgb(255 255 255 / 34%);
+  --focus: #386bca;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --background: #111417;
+  --foreground: #f5f6f7;
+  --muted: #a2a8ae;
+  --glass-border: rgb(255 255 255 / 14%);
+  --glass-fallback: rgb(255 255 255 / 5%);
+  --focus: #a4c5ff;
+  color-scheme: dark;
+}

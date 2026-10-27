@@ -1,0 +1,71 @@
+.portal-header {
+  position: fixed;
+  z-index: 30;
+  height: var(--header-height);
+  inset: 0 0 auto;
+}
+.portal-navbar {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.portal-navigation {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-inline: var(--page-gutter);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+.brand-logo {
+  display: block;
+  width: var(--navbar-logo-width);
+  max-height: calc(var(--header-height) - 20px);
+  height: auto;
+  filter: brightness(0);
+  transition: filter var(--theme-duration) ease-in-out;
+}
+[data-theme='dark'] .brand-logo {
+  filter: brightness(1);
+}
+
+/* ReportGuerilla's login header is separate from the workspace topbar. */
+.login-header {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--page-gutter);
+}
+[data-auth-phase='login'] .portal-header {
+  visibility: hidden;
+  pointer-events: none;
+}
+.portal-header .brand,
+.portal-header .theme-control,
+.portal-header .mobile-menu {
+  transform: translate3d(0, var(--rear-offset, calc(-1 * var(--header-height))), 0);
+}
+.portal-header .campaign-nav {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--auth-content-duration) ease;
+}
+[data-auth-phase='workspace'] .portal-header .campaign-nav {
+  opacity: 1;
+  pointer-events: auto;
+}
+[data-auth-phase='entering'] .portal-header,
+[data-auth-phase='leaving'] .portal-header {
+  pointer-events: none;
+}

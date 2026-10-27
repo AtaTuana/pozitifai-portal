@@ -1,0 +1,25 @@
+{
+  "name": "pozitifai-portal",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PozitifAI sales reporting portal",
+  "workspaces": [
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace=@pozitifai/frontend",
+    "build": "npm run build --workspace=@pozitifai/frontend",
+    "check": "npm run check --workspace=@pozitifai/frontend",
+    "test:graphics": "node --experimental-strip-types --test scripts/graphics.test.mjs",
+    "preview": "npm run preview --workspace=@pozitifai/frontend",
+    "start": "node scripts/start.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "3.9.10"
+  }
+}

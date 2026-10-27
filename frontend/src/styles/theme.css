@@ -1,0 +1,171 @@
+/* One sampled theme value shared with the optical renderer. */
+:root:root {
+  --background: color-mix(in srgb, #eceeef, #111417 calc(var(--theme-progress, 1) * 100%));
+  --foreground: color-mix(in srgb, #202325, #f5f6f7 calc(var(--theme-progress, 1) * 100%));
+  --muted: color-mix(in srgb, #62676c, #a2a8ae calc(var(--theme-progress, 1) * 100%));
+  --glass-border: color-mix(
+    in srgb,
+    rgb(255 255 255 / 70%),
+    rgb(255 255 255 / 14%) calc(var(--theme-progress, 1) * 100%)
+  );
+  --glass-fallback: color-mix(
+    in srgb,
+    rgb(255 255 255 / 12%),
+    rgb(255 255 255 / 4%) calc(var(--theme-progress, 1) * 100%)
+  );
+  --focus: color-mix(in srgb, #386bca, #a4c5ff calc(var(--theme-progress, 1) * 100%));
+  --panel: color-mix(
+    in srgb,
+    rgb(255 255 255 / 40%),
+    rgb(12 14 16 / 40%) calc(var(--theme-progress, 1) * 100%)
+  );
+  --panel-soft: color-mix(
+    in srgb,
+    rgb(255 255 255 / 10%),
+    rgb(12 14 16 / 10%) calc(var(--theme-progress, 1) * 100%)
+  );
+  --panel-solid: color-mix(in srgb, #f4f5f6, #141719 calc(var(--theme-progress, 1) * 100%));
+  --field: color-mix(
+    in srgb,
+    rgb(0 0 0 / 3.5%),
+    rgb(255 255 255 / 4%) calc(var(--theme-progress, 1) * 100%)
+  );
+  --line: color-mix(
+    in srgb,
+    rgb(0 0 0 / 15%),
+    rgb(255 255 255 / 16%) calc(var(--theme-progress, 1) * 100%)
+  );
+  --hover: color-mix(
+    in srgb,
+    rgb(0 0 0 / 5%),
+    rgb(255 255 255 / 7%) calc(var(--theme-progress, 1) * 100%)
+  );
+  --map-dot: color-mix(
+    in srgb,
+    rgb(0 0 0 / 19%),
+    rgb(255 255 255 / 22%) calc(var(--theme-progress, 1) * 100%)
+  );
+  --logo-ink: color-mix(in srgb, #000, #fff calc(var(--theme-progress, 1) * 100%));
+}
+.portal-shell,
+.liquid-scene,
+.auth-glass {
+  transition: none;
+}
+.brand-logo,
+[data-theme='dark'] .brand-logo {
+  filter: brightness(var(--theme-progress, 1));
+  transition: none;
+}
+.scene-logo,
+[data-theme='dark'] .scene-logo {
+  filter: brightness(var(--theme-progress, 1)) blur(var(--scene-blur))
+    drop-shadow(0 0 var(--logo-glow-radius) color-mix(in srgb, var(--logo-ink) 6%, transparent));
+  transition: none;
+}
+:where(.portal-workspace, .portal-dialog, .portal-sidebar, .login-sheet) button,
+.campaign-tab,
+.icon-button {
+  transition-property: opacity, transform;
+}
+/* One clipped sheet owns the workspace and its flaps; sidebar is content on that sheet. */
+.auth-glass {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--sheet-color);
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: blur(var(--workspace-blur));
+  -webkit-backdrop-filter: blur(var(--workspace-blur));
+}
+.portal-sidebar {
+  background: transparent;
+}
+.portal-navigation:has(.campaign-nav) {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr) 126px;
+  padding: 0;
+  gap: 0;
+}
+.portal-navigation:has(.campaign-nav) .brand {
+  justify-self: center;
+}
+.portal-navigation:has(.campaign-nav) .theme-control {
+  justify-self: center;
+}
+.campaign-nav {
+  padding: 14px 12px 0;
+  gap: 16px;
+  align-items: stretch;
+}
+.campaign-tab {
+  border: 0;
+  border-radius: 12px 12px 0 0;
+}
+.campaign-tab[aria-pressed='true'],
+.campaign-tab:hover {
+  background: transparent;
+}
+.campaign-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+}
+.campaign-tab[aria-pressed='true']::after {
+  opacity: 0.65;
+}
+@media (max-width: 768px) {
+  .portal-navigation:has(.campaign-nav) {
+    grid-template-columns: 48px 44px minmax(0, 1fr) 102px;
+  }
+  .portal-navigation:has(.campaign-nav) .brand {
+    margin: 0;
+  }
+  .campaign-nav {
+    padding-left: 8px;
+    padding-right: 8px;
+    gap: 12px;
+  }
+  .portal-sidebar {
+    background: var(--panel-solid);
+  }
+}
+
+.auth-glass {
+  --sheet-color: color-mix(
+    in srgb,
+    rgb(245 246 247 / var(--sheet-veil, var(--workspace-veil))),
+    rgb(12 14 16 / var(--sheet-veil, var(--workspace-veil))) calc(var(--theme-progress, 1) * 100%)
+  );
+}
+
+.sheet-outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.5;
+}
+
+/* Rear glass enters behind the folder; it never paints over the folder flaps. */
+.auth-rear-glass {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 15;
+  height: var(--header-height);
+  visibility: hidden;
+  pointer-events: none;
+  background: rgb(180 190 196 / 2.5%);
+  backdrop-filter: blur(var(--rear-glass-blur));
+  -webkit-backdrop-filter: blur(var(--rear-glass-blur));
+  transform: translate3d(0, -100%, 0);
+}
