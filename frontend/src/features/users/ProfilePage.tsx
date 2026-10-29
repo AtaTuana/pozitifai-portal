@@ -41,7 +41,7 @@ export function ProfilePage({
         >
           <h2>Hesap bilgileri</h2>
           <label htmlFor="profile-name">Ad soyad</label>
-          <input id="profile-name" name="name" defaultValue={user.name} required maxLength={100} />
+          <input id="profile-name" name="name" defaultValue={user.name} required maxLength={150} />
           <label htmlFor="profile-email">E-posta</label>
           <input id="profile-email" value={user.email} readOnly />
           <label htmlFor="profile-role">Rol</label>

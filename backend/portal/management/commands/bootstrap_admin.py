@@ -13,7 +13,7 @@ class Command(BaseCommand):
     help = "İlk admin hesabını yerel terminalden oluşturur; varsa değiştirmez."
 
     def handle(self, **options):
-        if User.objects.filter(role="admin").exists():
+        if User.objects.filter(role_id="admin").exists():
             return
         self.stdout.write(
             "İlk açılış: admin hesabını oluştur. Şifre yazarken ekranda görünmez."
@@ -27,18 +27,18 @@ class Command(BaseCommand):
             raise CommandError(
                 "SETUP001: Admin hesabı oluşturulmadı. start.bat ile tekrar başlat."
             )
-        if not name or len(name) > 100 or password != repeated or len(password) > 128:
+        if not name or len(name) > 150 or password != repeated or len(password) > 128:
             raise CommandError(
                 "SETUP002: Ad ve eşleşen şifreler gerekli; tekrar başlat."
             )
-        user = User(email=email, display_name=name, role="admin")
+        user = User(email=email, display_name=name, role_id="admin")
         try:
             validate_email(email)
             validate_password(password, user)
         except ValidationError as exc:
             raise CommandError("SETUP002: " + " ".join(exc.messages))
         with transaction.atomic():
-            if User.objects.filter(role="admin").exists():
+            if User.objects.filter(role_id="admin").exists():
                 return
             user.set_password(password)
             user.save()

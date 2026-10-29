@@ -81,7 +81,8 @@ export function UsersPage({
                   <td>{user.roleLabel}</td>
                   <td>
                     {user.teamId
-                      ? plan.nodes.find((node) => node.id === user.teamId)?.name || 'Atanan takım'
+                      ? plan.nodes.find((node) => node.kind === 'team' && node.code === user.teamId)
+                          ?.name || 'Atanan takım'
                       : 'Tüm takımlar'}
                   </td>
                   <td>{user.active ? 'Etkin' : 'Kapalı'}</td>
@@ -177,7 +178,7 @@ function UserEditor({
             name="name"
             defaultValue={user?.name}
             required
-            maxLength={100}
+            maxLength={150}
             autoFocus
           />
           <label htmlFor="user-email">E-posta</label>
@@ -209,7 +210,7 @@ function UserEditor({
                 {plan.nodes
                   .filter((node) => node.kind === 'team')
                   .map((team) => (
-                    <option key={team.id} value={team.id}>
+                    <option key={team.id} value={team.code}>
                       {team.name}
                     </option>
                   ))}

@@ -2,7 +2,7 @@
 
 Satış çağrı merkezi raporlaması için React + TypeScript / Django web portalı.
 
-**Mevcut aşama:** giriş, sunucu tarafında yetkilendirme, kullanıcı/profil yönetimi ve takım–kampanya–temsilci planlaması çalışır. Giriş kartından çalışma alanına genişleyen cam geçişi, sidebar, özgün logo, 70 px navbar, açık/koyu tema, perspektif ve su izi ortak kabukta korunur. Veri yükleme, KPI hesaplama, Excel raporları ve LLM sınıflandırması henüz uygulanmamıştır; genel bakış boş durum gösterir.
+**Mevcut aşama:** giriş, sunucu tarafında yetkilendirme, kullanıcı/profil yönetimi ve takım–kampanya–temsilci planlaması çalışır. Giriş kartından çalışma alanına genişleyen cam geçişi, sidebar, özgün logo, 70 px navbar, açık/koyu tema, perspektif ve su izi ortak kabukta korunur. Çağrı, kalite, transkript, yükleme izleri ve LLM analiz sonuçları için veritabanı şeması eklenmiştir. Dosya yükleme akışı, KPI hesaplama, Excel raporları ve LLM sınıflandırması henüz uygulanmamıştır; genel bakış boş durum gösterir.
 
 ## Yerelde başlatma
 
@@ -27,15 +27,16 @@ Diğer cihazlar aynı güvenilir yerel ağda terminaldeki **Network** adresini a
 
 _Yükleme yetki sözleşmesinde tanımlıdır; dosya yükleme ekranı/API'si sonraki aşamadır._
 
-Admin, **Takım planlama** ekranından kayıt oluşturur; haritada veya Özellikler panelinde bağlantıları kurup **Kaydet** ile veritabanına işler. Bir takım birden fazla kampanyaya, kampanya birden fazla takıma bağlanabilir. Bir temsilcinin en fazla bir takımı olur. Bağlantısız kayıtlar tutulabilir. Temsilci kaydı giriş hesabı değildir. Kullanıcı oluştururken takım kaptanı için takım seçmek zorunludur.
+Admin, **Takım planlama** ekranından kayıt oluşturur; haritada veya Özellikler panelinde bağlantıları kurup **Kaydet** ile veritabanına işler. Bir takım birden fazla kampanyaya, kampanya birden fazla takıma bağlanabilir. Bir temsilcinin aynı anda en fazla bir takımı olur; takım değişiklikleri üyelik geçmişinde korunur. Bağlantısız kayıtlar tutulabilir. Temsilci kaydı giriş hesabı değildir. Kullanıcı oluştururken takım kaptanı için takım seçmek zorunludur.
 
 Taslak için geri al/yinele ve kopyalama vardır. Kayıt kaldırma kaydedildiğinde arşivleme yapar; kaynak kayıt fiziksel olarak silinmez. Kaptanı bağlı takım önce kaptan ataması değiştirilmeden kaldırılamaz. İki sekmedeki çakışan kayıtlar sürüm denetimiyle reddedilir.
 
 ## Veritabanı ve özel dosyalar
 
-Hesap ve organizasyon tabloları varsayılan olarak **SQLite** ile çalışır. Çağrı/kalite/rapor tablolarının nihai 3NF tasarımı henüz eklenmedi. `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGHOST`, `PGPORT` ortam değişkenleri verilirse aynı Django modelleri PostgreSQL kullanır; bu sürümün çalıştırılan testleri SQLite üzerindedir.
+Portal varsayılan olarak **SQLite** ile çalışır. Hesap, organizasyon, takım üyeliği geçmişi, çağrı, kalite, transkript, yükleme ve analiz tabloları [veritabanı tasarımında](docs/database.md) açıklanır. `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGHOST`, `PGPORT` ortam değişkenleri verilirse aynı Django modelleri PostgreSQL kullanır; bu sürümün çalıştırılan testleri SQLite üzerindedir.
 
-- `.local/portal.sqlite3`: kullanıcılar, organizasyon, oturumlar ve işlem kayıtları.
+- `.local/portal.sqlite3`: portal veritabanı.
+- `.local/backups/`: bekleyen migration öncesinde otomatik oluşturulan SQLite yedekleri.
 - `.local/secret.key`: yerel gizli anahtar.
 - `.venv/`, `node_modules/`, `.cache/`: yeniden oluşturulabilen çalışma dosyaları.
 
@@ -72,7 +73,9 @@ backend/
     accounts.py           Giriş, profil, şifre ve hesap işlemleri
     permissions.py        Rol kapsamına göre sorgu sınırları
     planning.py           Taslak doğrulama ve ilişkisel kayıt
-    models.py             Kimlik, organizasyon ve işlem günlüğü
+    models/               Kimlik, organizasyon, raporlama, yükleme ve analiz şeması
+    services/             Atomik takım üyeliği işlemleri
+    fields.py             Türkiye yerel saati için tarih alanı
     middleware.py         Oturum süresi ve yetki iptali
     migrations/           Sürümlenmiş veritabanı yapısı
     tests/                Yetki, CSRF, oturum ve bütünlük testleri
@@ -88,6 +91,9 @@ frontend/src/
 scripts/                  Django ve Vite başlatıcıları
 ```
 
+- [Veritabanı tasarımı ve geçiş](docs/database.md)
+- [Veri kalitesi kural kataloğu ve karar akışları](docs/data-quality-rules.md)
+- [Neon PostgreSQL kurulum adımları](docs/cloud-postgresql.md)
 - [Görsel mimari](docs/ui-foundation.md)
 - [Güvenlik kapsamı](docs/security.md)
 - [Hata kılavuzu](docs/troubleshooting.md)

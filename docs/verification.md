@@ -34,3 +34,12 @@ Kullanıcı/parola değişikliğinin sunucu davranışı otomatik testlerle kont
 Ayrı QA veritabanıyla masaüstü görünümde ilk kampanya x=244, sidebar sağ kenarı x=232 ölçüldü (12 px boşluk). Camın path sınırı kampanya çıkıntılarıyla tek kapalı şekildir. Geçişin ara karesinde sidebar, workspace ve kampanya yazılarının hesaplanmış rengi aynıydı. Açık/koyu görünümler ve tarayıcı hata kayıtları kontrol edildi; hata yoktu. Piksel bütçesinin azaltılması bir FPS ölçümü değildir; Opera GX üzerinde donmanın tamamen giderildiği iddia edilmez.
 
 Sonraki katman düzeltmesi: navbar camı girişte kaldırıldı; arka üst cam ve çıkıntılı ön cam ayrı sıralandı, referansın ortak hareketi uyarlandı. Kullanıcının isteğiyle bu düzeltme için test, üretim derlemesi veya tarayıcı doğrulaması çalıştırılmadı. Yukarıdaki başarılı kontroller bu son değişikliği kapsamıyor.
+
+## 28 Ekim 2026 — Veritabanı şeması
+
+- Gerçek yerel SQLite veritabanına `0002` ve `0003` migration'ları uygulandı; önce tutarlı dosya yedeği oluşturuldu.
+- Geçiş sonrası `PRAGMA integrity_check` sonucu `ok`, yabancı anahtar hatası sayısı 0.
+- Mevcut admin hesabı ve parola hash'i yedekle karşılaştırılarak korunduğu doğrulandı. Önceki 34 işlem kaydı korundu, bir şema geçişi kaydı eklendi.
+- Django sistem kontrolü ve migration/model eşleşmesi kontrolü geçti. TypeScript tip kontrolü geçti.
+- Kullanıcının talebi doğrultusunda test paketi, tarayıcı testi veya performans testi çalıştırılmadı. Eski erişim testi fixture'ları yeni kimlik ve üyelik yapısına uyarlandı; bu değişiklikten sonra test sonuçları henüz yoktur.
+- PostgreSQL bağlantısı üzerinden migration çalıştırılmadı; PostgreSQL doğrulaması yapılmış gibi değerlendirilmemelidir.

@@ -77,7 +77,7 @@ export async function prepareBackend(root, prepareOnly) {
     await mkdir(join(root, '.cache'), { recursive: true });
     await writeFile(stamp, fingerprint);
   }
-  await run(python, [join(root, 'backend/manage.py'), 'migrate', '--noinput'], root);
+  await run(python, [join(root, 'backend/manage.py'), 'upgrade_database'], root);
   if (!prepareOnly) await run(python, [join(root, 'backend/manage.py'), 'bootstrap_admin'], root);
   return python;
 }

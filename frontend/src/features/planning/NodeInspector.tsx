@@ -39,17 +39,17 @@ export function NodeInspector({
       <input
         id="record-name"
         value={node.name}
-        maxLength={100}
+        maxLength={150}
         disabled={!editable}
         onChange={(event) => onChange({ ...node, name: event.target.value })}
       />
-      <label htmlFor="record-code">Kayıt kodu</label>
+      <label htmlFor="record-code">Kayıt kimliği</label>
       <input
         id="record-code"
         value={node.code}
-        maxLength={40}
-        disabled={!editable}
-        onChange={(event) => onChange({ ...node, code: event.target.value.toUpperCase() })}
+        maxLength={12}
+        readOnly
+        title="Bağlantıları korumak için kayıt kimliği sabittir."
       />
       <div className="inspector-divider" />
       {node.kind === 'agent' && (

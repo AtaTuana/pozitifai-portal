@@ -20,7 +20,7 @@ def user_data(user):
         "id": str(user.pk),
         "email": user.email,
         "name": user.display_name,
-        "role": user.role,
+        "role": user.role_id,
         "roleLabel": user.get_role_display(),
         "teamId": str(user.team_id) if user.team_id else None,
         "active": user.is_active,
@@ -134,7 +134,14 @@ def users(request):
     if request.method == "GET":
         audit(request, "users.view")
         return JsonResponse(
-            {"users": [user_data(u) for u in User.objects.order_by("display_name")]}
+            {
+                "users": [
+                    user_data(u)
+                    for u in User.objects.select_related("role").order_by(
+                        "display_name"
+                    )
+                ]
+            }
         )
     return save_user(request)
 
@@ -147,7 +154,7 @@ def user_detail(request, user_id):
 def save_user(request, user_id=None):
     data = body(request)
     verify_actor(request, data)
-    name = text_value(data, "name")
+    name = text_value(data, "name", 150)
     email = text_value(data, "email", 254).lower()
     validate_email(email)
     role = data.get("role")
@@ -172,7 +179,7 @@ def save_user(request, user_id=None):
     with transaction.atomic():
         actor = User.objects.select_for_update().get(pk=request.user.pk)
         if (
-            actor.role != "admin"
+            actor.role_id != "admin"
             or not actor.is_active
             or actor.auth_version != request.session.get("auth_version")
             or actor.password != request.user.password
@@ -185,15 +192,15 @@ def save_user(request, user_id=None):
         )
         if user is None:
             raise ApiError("DATA002", "Kullanıcı bulunamadı.", 404)
-        if (role == "admin" and (not user_id or user.role != "admin")) or (
-            user_id and user.role == "admin" and (role != "admin" or not active)
+        if (role == "admin" and (not user_id or user.role_id != "admin")) or (
+            user_id and user.role_id == "admin" and (role != "admin" or not active)
         ):
             raise ApiError(
                 "AUTH007",
                 "Tek admin hesabının rolü veya etkinliği değiştirilemez.",
                 403,
             )
-        user.display_name, user.email, user.role, user.team, user.is_active = (
+        user.display_name, user.email, user.role_id, user.team, user.is_active = (
             name,
             email,
             role,
@@ -225,7 +232,7 @@ def profile(request):
     if request.method == "GET":
         return JsonResponse({"user": user_data(request.user)})
     data = body(request)
-    request.user.display_name = text_value(data, "name")
+    request.user.display_name = text_value(data, "name", 150)
     request.user.save(update_fields=["display_name", "updated_at"])
     audit(request, "profile.updated", request.user.pk)
     return JsonResponse({"user": user_data(request.user)})

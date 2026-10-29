@@ -58,7 +58,7 @@ def endpoint(methods, *, authenticated=True, admin=False):
                 return error("REQ003", "Bu HTTP yöntemi desteklenmiyor.", 405)
             if authenticated and not request.user.is_authenticated:
                 return error("AUTH001", "Oturumun sona erdi. Yeniden giriş yap.", 401)
-            if admin and request.user.role != "admin":
+            if admin and request.user.role_id != "admin":
                 audit(request, "access.denied", request.path)
                 return error("AUTH003", "Bu işlem için admin yetkisi gerekli.", 403)
             try:

@@ -60,3 +60,16 @@ Bu adımlar genel kontroldür; kullanıcının tarayıcı/GPU tanısı incelenme
 **Başka cihazdan erişilemiyor:** İki cihaz aynı yerel ağda olmalıdır. Diğer cihazda `localhost` yerine sunucunun terminalde yazan Network adresini kullanın. VPN, misafir ağı veya güvenlik duvarı bağlantıyı engelleyebilir.
 
 **Kurulum yolu değişti:** Proje kendi konumunu otomatik bulur. Yol düzenlemek gerekmez. Bağımlılık klasörü taşınırken eksik kopyalandıysa proje kökünde `npm ci` çalıştırın.
+
+## Veritabanı geçişi
+
+- `DB001`: Desteklenmeyen veritabanı motoru. SQLite veya PostgreSQL kullanın.
+- `DB003`: Portal tablolarına beklenmeyen başka bir uygulama bağlı. Geçiş genişletilmeden uygulanmaz.
+- `DB004`: UUID dönüşümü otomatik geri migration desteklemez. Eski kod ve geçiş öncesi veritabanı yedeği birlikte geri yüklenir.
+- `DB005`: Eski iş kodları yeni kimliklerde çakışıyor. Kimlik eşleştirmeleri incelenmelidir; kayıtlar kesilmez.
+- `DB006`: Geçişte kayıt veya parola özeti uyuşmadı. Atomik geçiş geri alınır.
+- `DB007`: SQLite yedeği alınamadı/doğrulanamadı. Disk alanını ve dosya izinlerini kontrol edin.
+- `TEAM001`: Üyelik bitişi başlangıçtan sonra olmalı.
+- `TEAM002`: Takım üyeliği dönemleri çakışıyor. Var olan dönem kapanmadan yeni dönem açılamaz.
+
+Şema geçişinden sonra eski oturumlar kapanır. Portalı `start.bat` ile yeniden başlatıp mevcut e-posta ve şifreyle giriş yapın. Planlama kimlikleri değiştiği için açık eski sekmeyi yenileyin. Kayıt kimliği en fazla 12 karakterdir ve oluşturulduktan sonra sabittir.

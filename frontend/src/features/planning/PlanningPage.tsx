@@ -102,10 +102,13 @@ export function PlanningPage({ initial, editable, userId, onSaved, onDirty }: Pr
     if (!originals.length) return;
     const copied = originals.map((node) => ({
       ...node,
-      id: createId(),
-      name: `${node.name.slice(0, 92)} kopyası`,
-      code: `${node.code.slice(0, 30)}_${createId().slice(0, 6).toUpperCase()}`,
+      id: '',
+      name: `${node.name.slice(0, 142)} kopyası`,
+      code: `${node.code.slice(0, 5)}_${createId().slice(0, 6)}`,
     }));
+    copied.forEach((node) => {
+      node.id = `${node.kind}:${node.code}`;
+    });
     update({ ...plan, nodes: [...plan.nodes, ...copied] });
     setPositions((current) => ({
       ...current,
@@ -346,7 +349,7 @@ export function PlanningPage({ initial, editable, userId, onSaved, onDirty }: Pr
                 setNotice('Bu kayıt kodu zaten kullanılıyor.');
                 return;
               }
-              const id = createId();
+              const id = `${newKind}:${code}`;
               update({ ...plan, nodes: [...plan.nodes, { id, kind: newKind, name, code }] });
               setPositions((current) => ({
                 ...current,
@@ -374,14 +377,14 @@ export function PlanningPage({ initial, editable, userId, onSaved, onDirty }: Pr
               ))}
             </select>
             <label htmlFor="new-name">Ad</label>
-            <input id="new-name" name="name" required maxLength={100} autoFocus />
-            <label htmlFor="new-code">Kayıt kodu</label>
+            <input id="new-name" name="name" required maxLength={150} autoFocus />
+            <label htmlFor="new-code">Kayıt kimliği</label>
             <input
               id="new-code"
               name="code"
               required
               pattern="[a-zA-Z0-9_\-]+"
-              maxLength={40}
+              maxLength={12}
               placeholder="TAKIM_01"
             />
             <p className="hint">

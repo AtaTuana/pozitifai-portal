@@ -59,7 +59,9 @@ if os.environ.get("PGDATABASE"):
         "HOST": os.environ.get("PGHOST", "localhost"),
         "PORT": os.environ.get("PGPORT", "5432"),
     }
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+# Business timestamps are Turkish wall time in both database engines.
+DATABASES["default"]["TIME_ZONE"] = "Europe/Istanbul"
 LANGUAGE_CODE = "tr"
 TIME_ZONE = "Europe/Istanbul"
 USE_TZ = True

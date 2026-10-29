@@ -2,10 +2,11 @@
 
 import json
 import time
-import uuid
 from django.contrib.auth.hashers import identify_hasher
 from django.test import Client, TestCase, override_settings
 from portal.models import Agent, AuditEvent, Campaign, Team, TeamCampaign, User
+from portal.planning import node_id
+from portal.services.assignments import change_team
 
 PASSWORD = "Test-only-password-29!"
 
@@ -14,26 +15,28 @@ PASSWORD = "Test-only-password-29!"
 class AccessTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.alpha = Team.objects.create(name="Alpha", code="A")
-        cls.beta = Team.objects.create(name="Beta", code="B")
+        cls.alpha = Team.objects.create(name="Alpha", id="A")
+        cls.beta = Team.objects.create(name="Beta", id="B")
         cls.admin = User.objects.create_user(
-            "admin@example.test", PASSWORD, display_name="Admin", role="admin"
+            "admin@example.test", PASSWORD, display_name="Admin", role_id="admin"
         )
         cls.manager = User.objects.create_user(
-            "manager@example.test", PASSWORD, display_name="Manager", role="manager"
+            "manager@example.test", PASSWORD, display_name="Manager", role_id="manager"
         )
         cls.captain = User.objects.create_user(
             "captain@example.test",
             PASSWORD,
             display_name="Captain",
-            role="captain",
+            role_id="captain",
             team=cls.alpha,
         )
-        cls.campaign = Campaign.objects.create(name="Shared", code="SHARED")
+        cls.campaign = Campaign.objects.create(name="Shared", id="SHARED")
         TeamCampaign.objects.create(team=cls.alpha, campaign=cls.campaign)
         TeamCampaign.objects.create(team=cls.beta, campaign=cls.campaign)
-        cls.agent_a = Agent.objects.create(name="One", code="ONE", team=cls.alpha)
-        cls.agent_b = Agent.objects.create(name="Two", code="TWO", team=cls.beta)
+        cls.agent_a = Agent.objects.create(name="One", id="ONE")
+        cls.agent_b = Agent.objects.create(name="Two", id="TWO")
+        change_team(cls.agent_a.pk, cls.alpha.pk)
+        change_team(cls.agent_b.pk, cls.beta.pk)
 
     def setUp(self):
         self.client = Client(enforce_csrf_checks=True)
@@ -106,12 +109,15 @@ class AccessTests(TestCase):
         self.sign_in(self.captain)
         data = self.draft()
         ids = {node["id"] for node in data["nodes"]}
-        self.assertIn(str(self.alpha.pk), ids)
-        self.assertIn(str(self.agent_a.pk), ids)
-        self.assertNotIn(str(self.beta.pk), ids)
-        self.assertNotIn(str(self.agent_b.pk), ids)
+        self.assertIn(node_id("team", self.alpha.pk), ids)
+        self.assertIn(node_id("agent", self.agent_a.pk), ids)
+        self.assertNotIn(node_id("team", self.beta.pk), ids)
+        self.assertNotIn(node_id("agent", self.agent_b.pk), ids)
         self.assertTrue(
-            all(edge["source"] == str(self.alpha.pk) for edge in data["edges"])
+            all(
+                edge["source"] == node_id("team", self.alpha.pk)
+                for edge in data["edges"]
+            )
         )
         for path in ("/api/users", "/api/activity"):
             self.assertEqual(self.client.get(path).status_code, 403)
@@ -135,7 +141,7 @@ class AccessTests(TestCase):
                 "name": "New captain",
                 "email": "NEW@example.test",
                 "role": "captain",
-                "teamId": str(self.beta.pk),
+                "teamId": self.beta.pk,
                 "password": "Some-Long-Test-Secret!",
                 "currentPassword": PASSWORD,
             },
@@ -207,13 +213,13 @@ class AccessTests(TestCase):
         self.assertEqual(
             self.write(
                 "/api/profile",
-                {"name": "Changed", "role": "admin", "teamId": str(self.beta.pk)},
+                {"name": "Changed", "role": "admin", "teamId": self.beta.pk},
                 "patch",
             ).status_code,
             200,
         )
         self.captain.refresh_from_db()
-        self.assertEqual(self.captain.role, "captain")
+        self.assertEqual(self.captain.role_id, "captain")
         self.assertEqual(self.captain.team_id, self.alpha.pk)
 
     def test_logout_revokes_session(self):
@@ -231,19 +237,19 @@ class AccessTests(TestCase):
     def test_plan_saves_normalized_many_to_many_links(self):
         self.sign_in()
         data = self.draft()
-        new_id = str(uuid.uuid4())
+        new_id = node_id("campaign", "NEW")
         data["nodes"].append(
             {"id": new_id, "kind": "campaign", "name": "New", "code": "NEW"}
         )
         data["edges"].extend(
             [
-                {"source": str(team.pk), "target": new_id}
+                {"source": node_id("team", team.pk), "target": new_id}
                 for team in (self.alpha, self.beta)
             ]
         )
         response = self.write("/api/planning", data, "put")
         self.assertEqual(response.status_code, 200, response.content)
-        self.assertEqual(Campaign.objects.get(pk=new_id).teams.count(), 2)
+        self.assertEqual(Campaign.objects.get(pk="NEW").teams.count(), 2)
         self.assertEqual(self.write("/api/planning", data, "put").status_code, 409)
 
     def test_invalid_agent_double_assignment_rolls_back(self):
@@ -251,7 +257,10 @@ class AccessTests(TestCase):
         data = self.draft()
         data["nodes"][0]["name"] = "Must not persist"
         data["edges"].append(
-            {"source": str(self.beta.pk), "target": str(self.agent_a.pk)}
+            {
+                "source": node_id("team", self.beta.pk),
+                "target": node_id("agent", self.agent_a.pk),
+            }
         )
         self.assertEqual(self.write("/api/planning", data, "put").status_code, 400)
         self.assertFalse(Team.objects.filter(name="Must not persist").exists())
@@ -263,16 +272,24 @@ class AccessTests(TestCase):
         self.assertEqual(self.write("/api/planning", data, "put").status_code, 200)
         self.assertEqual(Agent.objects.count(), 2)
         self.assertEqual(Campaign.objects.count(), 1)
-        self.assertFalse(Agent.objects.exclude(team=None).exists())
+        self.assertFalse(
+            Agent.objects.filter(
+                team_assignments__valid_to__isnull=True, team_assignments__isnull=False
+            ).exists()
+        )
 
     def test_captains_team_cannot_be_archived(self):
         self.sign_in()
         data = self.draft()
         data["nodes"] = [
-            node for node in data["nodes"] if node["id"] != str(self.alpha.pk)
+            node
+            for node in data["nodes"]
+            if node["id"] != node_id("team", self.alpha.pk)
         ]
         data["edges"] = [
-            edge for edge in data["edges"] if edge["source"] != str(self.alpha.pk)
+            edge
+            for edge in data["edges"]
+            if edge["source"] != node_id("team", self.alpha.pk)
         ]
         self.assertEqual(self.write("/api/planning", data, "put").status_code, 400)
         self.alpha.refresh_from_db()
