@@ -1,15 +1,23 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-import type { PortalUser, View } from '../../api/types';
-import { Icon } from '../../components/ui/Icon';
-import type { IconName } from '../../components/ui/Icon';
+import { useLayoutEffect, useRef, useState } from "react";
+import type { PortalUser, View } from "../../api/types";
+import { Icon } from "../../components/ui/Icon";
+import type { IconName } from "../../components/ui/Icon";
 
-type Item = { view: View; text: string; icon: IconName; admin?: boolean };
+type Item = {
+  view: View;
+  text: string;
+  icon: IconName;
+  admin?: boolean;
+  upload?: boolean;
+  planning?: boolean;
+};
 const items: Item[] = [
-  { view: 'workspace', text: 'Genel bakış', icon: 'overview' },
-  { view: 'planning', text: 'Takım planlama', icon: 'plan' },
-  { view: 'agents', text: 'Temsilciler', icon: 'agent' },
-  { view: 'users', text: 'Kullanıcılar', icon: 'users', admin: true },
-  { view: 'activity', text: 'İşlem geçmişi', icon: 'history', admin: true },
+  { view: "workspace", text: "Genel bakış", icon: "overview" },
+  { view: "planning", text: "Takım planlama", icon: "plan", planning: true },
+  { view: "agents", text: "Temsilciler", icon: "agent" },
+  { view: "imports", text: "Veri yükleme", icon: "upload", upload: true },
+  { view: "users", text: "Kullanıcılar", icon: "users", admin: true },
+  { view: "activity", text: "İşlem geçmişi", icon: "history", admin: true },
 ];
 
 export function Sidebar({
@@ -31,7 +39,9 @@ export function Sidebar({
   const [selector, setSelector] = useState({ top: 0, height: 48, opacity: 0 });
   useLayoutEffect(() => {
     const measure = () => {
-      const active = nav.current?.querySelector<HTMLElement>('[aria-current="page"]');
+      const active = nav.current?.querySelector<HTMLElement>(
+        '[aria-current="page"]',
+      );
       setSelector(
         active
           ? { top: active.offsetTop, height: active.offsetHeight, opacity: 1 }
@@ -46,10 +56,14 @@ export function Sidebar({
   return (
     <>
       {mobileOpen && (
-        <button className="sidebar-scrim" aria-label="Menüyü kapat" onClick={onClose} />
+        <button
+          className="sidebar-scrim"
+          aria-label="Menüyü kapat"
+          onClick={onClose}
+        />
       )}
       <aside
-        className={`portal-sidebar ${mobileOpen ? 'is-open' : ''}`}
+        className={`portal-sidebar ${mobileOpen ? "is-open" : ""}`}
         aria-label="İşlem navigasyonu"
       >
         <nav ref={nav} className="operation-nav" aria-label="İşlemler">
@@ -63,13 +77,18 @@ export function Sidebar({
             }}
           />
           {items
-            .filter((item) => !item.admin || user.capabilities.manage)
+            .filter(
+              (item) =>
+                (!item.admin || user.capabilities.manage) &&
+                (!item.planning || user.capabilities.allTeams) &&
+                (!item.upload || user.capabilities.upload),
+            )
             .map((item) => (
               <button
                 key={item.view}
                 type="button"
                 className="operation-button"
-                aria-current={view === item.view ? 'page' : undefined}
+                aria-current={view === item.view ? "page" : undefined}
                 onClick={() => {
                   onView(item.view);
                   onClose();
@@ -83,20 +102,20 @@ export function Sidebar({
         <div className="sidebar-bottom">
           <button
             className="profile-control"
-            aria-current={view === 'profile' ? 'page' : undefined}
+            aria-current={view === "profile" ? "page" : undefined}
             onClick={() => {
-              onView('profile');
+              onView("profile");
               onClose();
             }}
           >
             <span className="avatar" aria-hidden>
               {user.name
-                .split(' ')
+                .split(" ")
                 .filter(Boolean)
                 .slice(0, 2)
                 .map((word) => word[0])
-                .join('')
-                .toLocaleUpperCase('tr')}
+                .join("")
+                .toLocaleUpperCase("tr")}
             </span>
             <span>
               <strong>{user.name}</strong>

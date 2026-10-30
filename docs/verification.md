@@ -43,3 +43,20 @@ Sonraki katman düzeltmesi: navbar camı girişte kaldırıldı; arka üst cam v
 - Django sistem kontrolü ve migration/model eşleşmesi kontrolü geçti. TypeScript tip kontrolü geçti.
 - Kullanıcının talebi doğrultusunda test paketi, tarayıcı testi veya performans testi çalıştırılmadı. Eski erişim testi fixture'ları yeni kimlik ve üyelik yapısına uyarlandı; bu değişiklikten sonra test sonuçları henüz yoktur.
 - PostgreSQL bağlantısı üzerinden migration çalıştırılmadı; PostgreSQL doğrulaması yapılmış gibi değerlendirilmemelidir.
+
+## 30 Ekim 2026 — Dosya yükleme ve veri temizleme
+
+- Python kaynakları sözdizimi açısından ayrıştırıldı; Django sistem kontrolü `System check identified no issues (0 silenced).` sonucunu verdi.
+- Migration/model eşleşmesi `makemigrations --check --dry-run --noinput` ile kontrol edildi: `No changes detected`.
+- TypeScript tip kontrolü (`tsc --noEmit`) geçti.
+- Kullanıcının isteğiyle test paketi, tarayıcı testi, üretim derlemesi veya veri yükleme senaryosu çalıştırılmadı. Bu kontroller, veri temizleme sonuçlarının ve UI davranışının uçtan uca doğrulandığı anlamına gelmez.
+- Kullanıcı Neon'da önceki şemanın tablolarını gördüğünü doğruladı. Yeni `0004` migration'ı ve yükleyici bu oturumdan Neon'da çalıştırılmadı; bağlantı değişkenleri kullanıcının ayrı PowerShell oturumunda. Aynı terminalden portal yeniden başlatıldığında başlatıcı migration'ı uygular.
+- Kaynak case belgeleri, CSV/TXT dosyaları ve kullanıcının `Report/` klasörü değiştirilmedi. Veri yükleme değişiklikleri ayrı `codex/data-imports` dalında commit edilmeden tutulur.
+
+## 30 Ekim 2026 — Filtreli KPI hesaplama servisi
+
+- Backend'e `GET /api/reports/kpis` ve arayüzden bağımsız ortak hesaplama servisi eklendi. Frontend dosyaları değiştirilmedi; yeni migration yok.
+- Değişen/yeni Python kaynakları sözdizimi açısından ayrıştırıldı ve biçimlendirildi. Django sistem kontrolü `System check identified no issues (0 silenced).` sonucunu verdi.
+- SQLite ve PostgreSQL için yönetici/kaptan kapsamlarıyla 48 özet, grup sayımı ve birleşik kırılım SQL sorgusu çevrimdışı derlendi. Kontrol sırasında bağlantı açma ve cursor çalıştırma engellendi; bu işlem SQL'in gerçek sunucuda çalıştırıldığı veya sonuçlarının doğrulandığı anlamına gelmez.
+- İzole sentetik veriler için 11 test senaryosu yazıldı: paydalar ve eksikler, kaptan kapsamı, yerel tarih sınırları/saat, güncel takım/geçmişin çoğaltmaması, birleşik filtreler, kırılım sayfalaması, aynı adlı temsilciler, ağırlıklı ortalama, sıfır/boş ayrımı, ondalık kalite toplamı, geçersiz parametreler, oturum/yöntem sınırları ve yetki iptali.
+- Kullanıcının önceki talebi doğrultusunda test paketi, tarayıcı testi veya gerçek rapor API isteği çalıştırılmadı. Test senaryoları yazılmış olmakla birlikte henüz yürütülmedi. Kullanıcının veritabanına, yüklenmiş verilerine veya kaynak dosyalarına işlem uygulanmadı.

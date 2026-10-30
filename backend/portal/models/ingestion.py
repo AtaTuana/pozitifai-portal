@@ -31,6 +31,9 @@ class ImportBatch(models.Model):
     )
     uploaded_at = LocalDateTimeField(auto_now_add=True)
     completed_at = LocalDateTimeField(null=True, blank=True)
+    ruleset_version = models.CharField(max_length=16, default="1.0")
+    options = models.JSONField(default=dict)
+    summary = models.JSONField(default=dict)
 
     class Meta:
         indexes = [
@@ -65,6 +68,8 @@ class ImportRow(models.Model):
     )
     row_number = models.PositiveIntegerField()
     raw_data = models.JSONField(default=dict)
+    reference_id = models.CharField(max_length=12, blank=True, db_index=True)
+    cleaned_data = models.JSONField(default=dict)
     status = models.CharField(
         max_length=12, choices=Status.choices, default=Status.PENDING
     )
@@ -98,6 +103,20 @@ class ImportIssue(models.Model):
     code = models.CharField(max_length=32)
     field_name = models.CharField(max_length=64, blank=True)
     message = models.TextField()
+    rule_version = models.PositiveSmallIntegerField(default=1)
+    operation = models.CharField(max_length=24, default="review")
+    before_value = models.JSONField(null=True, blank=True)
+    after_value = models.JSONField(null=True, blank=True)
+    evidence = models.JSONField(default=dict)
+    report_effect = models.TextField(blank=True)
+    created_at = LocalDateTimeField(auto_now_add=True)
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="import_actions",
+    )
     resolved_at = LocalDateTimeField(null=True, blank=True)
     resolved_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL

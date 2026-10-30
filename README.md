@@ -2,7 +2,7 @@
 
 Satış çağrı merkezi raporlaması için React + TypeScript / Django web portalı.
 
-**Mevcut aşama:** giriş, sunucu tarafında yetkilendirme, kullanıcı/profil yönetimi ve takım–kampanya–temsilci planlaması çalışır. Giriş kartından çalışma alanına genişleyen cam geçişi, sidebar, özgün logo, 70 px navbar, açık/koyu tema, perspektif ve su izi ortak kabukta korunur. Çağrı, kalite, transkript, yükleme izleri ve LLM analiz sonuçları için veritabanı şeması eklenmiştir. Dosya yükleme akışı, KPI hesaplama, Excel raporları ve LLM sınıflandırması henüz uygulanmamıştır; genel bakış boş durum gösterir.
+**Mevcut aşama:** giriş, sunucu tarafında yetkilendirme, kullanıcı/profil yönetimi ve takım–kampanya–temsilci planlaması bulunur. Giriş kartından çalışma alanına genişleyen cam geçişi, sidebar, özgün logo, 70 px navbar, açık/koyu tema, perspektif ve su izi ortak kabukta korunur. CSV/TXT yükleme, numaralı kurallarla temizleme, Q1 kalite onarımı ve alan bazında işlem izi uygulanmıştır. Filtreli KPI özeti ve birleşik kırılımlar backend API'sinde hesaplanır; dashboard gösterimi, Excel raporları ve LLM sınıflandırması henüz bağlı değildir. Çalıştırılmış kontrollerin kapsamı [doğrulama kaydında](docs/verification.md) belirtilir.
 
 ## Yerelde başlatma
 
@@ -25,7 +25,7 @@ Diğer cihazlar aynı güvenilir yerel ağda terminaldeki **Network** adresini a
 | Takım kaptanı     | Yalnızca kendi takımı | Hayır                             | Hayır                 | Hayır            |
 | Temsilci          | Giriş hesabı yok      | —                                 | —                     | —                |
 
-_Yükleme yetki sözleşmesinde tanımlıdır; dosya yükleme ekranı/API'si sonraki aşamadır._
+_Çağrı, kalite ve transkript yüklemesini admin/yönetici yapar. Temsilci kadrosunu yalnızca admin yükler._
 
 Admin, **Takım planlama** ekranından kayıt oluşturur; haritada veya Özellikler panelinde bağlantıları kurup **Kaydet** ile veritabanına işler. Bir takım birden fazla kampanyaya, kampanya birden fazla takıma bağlanabilir. Bir temsilcinin aynı anda en fazla bir takımı olur; takım değişiklikleri üyelik geçmişinde korunur. Bağlantısız kayıtlar tutulabilir. Temsilci kaydı giriş hesabı değildir. Kullanıcı oluştururken takım kaptanı için takım seçmek zorunludur.
 
@@ -33,7 +33,7 @@ Taslak için geri al/yinele ve kopyalama vardır. Kayıt kaldırma kaydedildiği
 
 ## Veritabanı ve özel dosyalar
 
-Portal varsayılan olarak **SQLite** ile çalışır. Hesap, organizasyon, takım üyeliği geçmişi, çağrı, kalite, transkript, yükleme ve analiz tabloları [veritabanı tasarımında](docs/database.md) açıklanır. `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGHOST`, `PGPORT` ortam değişkenleri verilirse aynı Django modelleri PostgreSQL kullanır; bu sürümün çalıştırılan testleri SQLite üzerindedir.
+Portal varsayılan olarak **SQLite** ile çalışır. Hesap, organizasyon, takım üyeliği geçmişi, çağrı, kalite, transkript, yükleme ve analiz tabloları [veritabanı tasarımında](docs/database.md) açıklanır. `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGHOST`, `PGPORT` ortam değişkenleri verilirse aynı Django modelleri PostgreSQL kullanır. PostgreSQL kurulumunu [Neon kılavuzu](docs/cloud-postgresql.md) açıklar; doğrulama kapsamı ayrı kaydedilir.
 
 - `.local/portal.sqlite3`: portal veritabanı.
 - `.local/backups/`: bekleyen migration öncesinde otomatik oluşturulan SQLite yedekleri.
@@ -43,6 +43,8 @@ Portal varsayılan olarak **SQLite** ile çalışır. Hesap, organizasyon, takı
 Bu klasörler Git tarafından dışlanır. `.local` içeriğini paylaşmayın; yedek alırken uygulama durmuşken veritabanı ve anahtarı birlikte güvenli saklayın. Vite bu özel klasörleri sunmaz. `PORTAL_DATA_DIR` ayrı veri dizini, `PORTAL_PYTHON` otomatik bulunamayan Python çalıştırılabilir dosyasını seçer.
 
 ## Geliştirme ve doğrulama
+
+Dosya yüklemek için admin hesabıyla **Temsilciler → Temsilci kadrosu yükle** alanından `agents.csv` seçilir. Ardından admin/yönetici **Veri yükleme** sayfasından `calls.csv`, `quality_scores.csv` ve transkript klasörünü ayrı alanlara yükler. Kalite için yalnızca bu case kaynağına uygun **Q1 v1** profili seçilir. Kaynak dosyalar değiştirilmez; sonuçlar yükleme geçmişinden ve kural filtresinden incelenir. Ayrıntılar: [yükleme akışı](docs/data-imports.md).
 
 ```sh
 npm start -- --no-open       # Django + Vite; tarayıcıyı otomatik açma
@@ -73,6 +75,10 @@ backend/
     accounts.py           Giriş, profil, şifre ve hesap işlemleri
     permissions.py        Rol kapsamına göre sorgu sınırları
     planning.py           Taslak doğrulama ve ilişkisel kayıt
+    imports.py            Yetkili multipart yükleme ve işlem izi API'si
+    reports.py            Oturum korumalı KPI hesaplama API'si
+    reporting/            Filtreler, yetkili sorgular, ortak KPI ve kırılım hesapları
+    ingestion/            Ayrıştırma, temizleme, kalıcı kayıt ve geç eşleştirme
     models/               Kimlik, organizasyon, raporlama, yükleme ve analiz şeması
     services/             Atomik takım üyeliği işlemleri
     fields.py             Türkiye yerel saati için tarih alanı
@@ -85,6 +91,7 @@ frontend/src/
   features/auth/          Giriş ve cam genişleme animasyonu
   features/planning/      Kütüphane, harita, özellikler, taslak geçmişi
   features/users/         Kullanıcı ve profil ekranları
+  features/imports/       CSV/TXT yükleme, özetler ve kural bazında işlem izi
   features/workspace/     Sidebar ve kayıt ekranları
   components/             Ortak logo, cam, tema ve UI bileşenleri
   config/visual.config.ts  Boyut, blur, perspektif ve geçiş ayarları
@@ -93,6 +100,8 @@ scripts/                  Django ve Vite başlatıcıları
 
 - [Veritabanı tasarımı ve geçiş](docs/database.md)
 - [Veri kalitesi kural kataloğu ve karar akışları](docs/data-quality-rules.md)
+- [Dosya yükleme ve temizleme akışı](docs/data-imports.md)
+- [Filtreli KPI ve kırılım API'si](docs/reporting-api.md)
 - [Neon PostgreSQL kurulum adımları](docs/cloud-postgresql.md)
 - [Görsel mimari](docs/ui-foundation.md)
 - [Güvenlik kapsamı](docs/security.md)

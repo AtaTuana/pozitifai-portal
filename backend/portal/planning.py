@@ -130,8 +130,17 @@ def validate_draft(data):
     return normalized, pairs, agent_teams
 
 
+@endpoint(["GET"])
+def workspace(request):
+    """Provide scoped roster and campaign data without granting planning access."""
+    return JsonResponse(planning_data(request.user))
+
+
 @endpoint(["GET", "PUT"])
 def planning(request):
+    if request.user.role_id not in ("admin", "manager"):
+        audit(request, "access.denied", request.path)
+        raise ApiError("AUTH003", "Takım planlamasına erişim yetkin yok.", 403)
     if request.method == "GET":
         audit(request, "planning.view")
         return JsonResponse(planning_data(request.user))

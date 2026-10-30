@@ -6,6 +6,8 @@ export const visualConfig = {
     transitionMs: 1800,
   },
   motion: { authMorphMs: 1600, contentFadeMs: 240 },
+  // Yükleme kutuları: açılma/kapanma, metin geçişi ve kenar ışığının tur süresi.
+  imports: { morphMs: 720, contentFadeMs: 160, borderTravelMs: 2800, cardRadiusPx: 16, gapPx: 20 },
   logo: {
     maxWidthPx: 560,
     viewportWidthRatio: 0.42,
@@ -48,8 +50,8 @@ export const visualConfig = {
     lifetimeMs: 1800,
     sampleSpacingPx: 18,
     spreadPxPerSecond: 38,
-    softnessPx: 22,
-    refractionPx: 12,
+    softnessPx: 4,
+    refractionPx: 4,
     lightStrength: 0.045,
   },
   performance: {

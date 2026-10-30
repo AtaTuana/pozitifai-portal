@@ -78,9 +78,9 @@ Veritabanındaki iş zamanları **Türkiye yerel saati** olarak saklanır. `Loca
 
 Üyelik aralığı `[ValidFrom, ValidTo)` biçimindedir: başlangıç dahil, bitiş hariç. Bitişi NULL olan kayıt devam eden üyeliği belirtir. Bir temsilcinin tek açık üyeliği olabilir; açık ya da kapalı hiçbir dönem çakışamaz. Bunu model kısıtları, atomik atama servisi ve SQLite/PostgreSQL çakışma trigger'ları birlikte korur.
 
-Planlama kaydı eski üyeliği kapatır, yenisini aynı anda başlatır. `Agent.TeamId` tutulmaz. Kaptanın çağrı sorgusu `scoped_calls()` aracılığıyla çağrı anındaki takım üyeliğini kullanır. Güncel kampanya bağlantısını tüm çağrılara erişim izni olarak kullanmaz. Bilinmeyen temsilcili çağrılar yalnızca genel yetkili sorgulara dahildir.
+Planlama kaydı eski üyeliği kapatır, yenisini aynı anda başlatır. `Agent.TeamId` tutulmaz. Bu case'in kararı uyarınca kaptanın çağrı sorgusu `scoped_calls()` aracılığıyla temsilcinin **güncel takım üyeliğini** kullanır; tarihsiz çağrılar da doğru kişinin kapsamında kalır. Güncel kampanya bağlantısını tüm çağrılara erişim izni olarak kullanmaz. Bilinmeyen temsilcili çağrılar yalnızca genel yetkili sorgulara dahildir.
 
-Kaynak CSV geçmiş takım değişim tarihleri içermiyor. Migration mevcut üyeliği yalnızca gözlemlendiği geçiş anından başlatır; işe başlama gününü üyelik tarihi saymaz. 30 Ekim 2026 kararıyla bu case raporlarında doğrudan `agents.csv` kadrosundaki takım kullanılacak. Yükleyici ve kaptanın sorgu kapsamı bu karara göre henüz güncellenmedi; tarihsel üyelik sorgusu tek başına bu davranışı sağlamaz. Ayrıntı: [DQ-011 ve uygulama farkları](data-quality-rules.md).
+Kaynak CSV geçmiş takım değişim tarihleri içermiyor. Migration ve kadro yükleyici üyeliği yalnızca gözlemlendiği anda başlatır; işe başlama gününü üyelik tarihi saymaz. `agents.csv` yüklenince güncel takım atanır; önceki üyelik kaydı korunur. Case raporlarında bu güncel kadro kullanılır. Ayrıntı: [DQ-011 ve uygulama durumu](data-quality-rules.md).
 
 ## Sonuçlar ve eksik veriler
 
@@ -91,9 +91,9 @@ Kaynak CSV geçmiş takım değişim tarihleri içermiyor. Migration mevcut üye
 | 3   | Geri ara    | Evet                       |
 | 4   | Ulaşılamadı | Hayır                      |
 
-Kaynak metinlerden sayısal sonuca eşleştirme yükleyicinin sorumluluğudur. `???` otomatik olarak ulaşılamadı sayılmaz; bilinmeyen sonuç NULL olabilir. Mevcut modelde `Call.started_at` zorunludur. Yeni DQ-010 kararı, kurtarılamayan tarihi NULL bırakıp diğer kullanılabilir çağrı verilerini korur; bunun için sonraki uygulama adımında migration gerekir. Eşleşmeyen kalite satırı ve otomatik onarılamayan puanlar ham yükleme katmanında bekler. Kabul edilen temizleme davranışı [kural kataloğunda](data-quality-rules.md) tanımlıdır.
+Kaynak metinlerden sayısal sonuca eşleştirme yükleyicinin sorumluluğudur. `???` otomatik olarak ulaşılamadı sayılmaz; bilinmeyen sonuç NULL olabilir. `0004` sonrasında `Call.started_at` NULL kabul eder. DQ-010, kurtarılamayan tarihi boş bırakıp diğer kullanılabilir çağrı verilerini korur. Eşleşmeyen kalite satırı ve otomatik onarılamayan puanlar ham yükleme katmanında bekler. Kabul edilen temizleme davranışı [kural kataloğunda](data-quality-rules.md) tanımlıdır.
 
-Bir çağrı için en fazla bir kalite kaydı ve bir transkript vardır. Kalite kaydı olmayan çağrı raporda NULL puanla yer alır, sıfır verilmez. Alt puanlar eksikse NULL kalabilir. Yeni DQ-015 kararı, Q1 profilinin uygulanabildiği kaynakta yalnız toplam puan eksik veya açıkça geçersiz ve üç alt puan geçerliyse toplamın yeniden hesaplanmasına izin verir. DQ-016 ve DQ-017, ters hesaplamanın ve belirsiz hataların sınırlarını belirler. Bu kurallar ve ayrıntılı alan değişiklik günlüğü henüz kodlanmadı.
+Bir çağrı için en fazla bir kalite kaydı ve bir transkript vardır. Kalite kaydı olmayan çağrı raporda NULL puanla yer alır, sıfır verilmez. Alt puanlar eksikse NULL kalabilir. DQ-015, Q1 profilinin seçildiği kaynakta yalnız toplam puan eksik veya açıkça geçersiz ve üç alt puan geçerliyse toplamı yeniden hesaplar. DQ-016 ve DQ-017, ters hesaplamanın ve belirsiz hataların sınırlarını belirler. Bu kararlar alan bazındaki işlem günlüğüne yazılır.
 
 ## Transkript ve LLM kayıtları
 
@@ -119,4 +119,4 @@ Kimlik geçişi otomatik geri migration desteklemez. Geri dönüş gerekirse uyg
 
 ## Bu adımın sınırı
 
-Veritabanı şeması ve mevcut hesap/planlama koduyla bağlantısı uygulanmıştır. CSV yükleme API'si, veri temizleme motoru, LLM sağlayıcıları, KPI hesapları ve Excel çıktıları sonraki adımlardır. Case dosyaları değiştirilmez veya otomatik olarak içeri aktarılmaz.
+Veritabanı şeması, mevcut hesap/planlama kodu ve CSV/TXT yükleyici bağlanmıştır. `0004` migration'ı tarihsiz çağrılar, yükleme özetleri, temizlenmiş satır alanları ve sürümlü işlem izini ekler. LLM sağlayıcıları, KPI hesapları ve Excel çıktıları sonraki adımlardır. Case dosyaları değiştirilmez veya otomatik olarak içeri aktarılmaz; yetkili kullanıcı yükleme alanından seçer.

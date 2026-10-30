@@ -10,6 +10,6 @@ if __name__ == "__main__":
         host="127.0.0.1",
         port=int(os.environ.get("API_PORT", "8000")),
         threads=4,
-        max_request_body_size=262144,
+        max_request_body_size=12 * 1024 * 1024,
         clear_untrusted_proxy_headers=True,
     )

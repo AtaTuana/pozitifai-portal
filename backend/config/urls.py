@@ -1,5 +1,5 @@
 from django.urls import path
-from portal import accounts, planning
+from portal import accounts, planning, imports, reports
 
 urlpatterns = [
     path("api/session", accounts.session),
@@ -10,5 +10,10 @@ urlpatterns = [
     path("api/profile", accounts.profile),
     path("api/password", accounts.change_password),
     path("api/planning", planning.planning),
+    path("api/workspace", planning.workspace),
+    path("api/reports/kpis", reports.kpis),
     path("api/activity", planning.activity),
+    path("api/imports", imports.imports),
+    path("api/imports/rules", imports.import_rules),
+    path("api/imports/<int:batch_id>", imports.import_detail),
 ]

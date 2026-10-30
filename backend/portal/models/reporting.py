@@ -31,7 +31,7 @@ class Call(models.Model):
     agent = models.ForeignKey(
         "Agent", null=True, blank=True, on_delete=models.PROTECT, related_name="calls"
     )
-    started_at = LocalDateTimeField(db_index=True)
+    started_at = LocalDateTimeField(db_index=True, null=True, blank=True)
     duration_seconds = models.PositiveSmallIntegerField(null=True, blank=True)
     result = models.ForeignKey(Result, null=True, blank=True, on_delete=models.PROTECT)
     campaign = models.ForeignKey(

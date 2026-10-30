@@ -1,6 +1,6 @@
 # Veri kalitesi kural kataloğu
 
-Katalog sürümü: **1.0 — 30 Ekim 2026**. Bu belge kararlaştırılan davranışı tanımlar; temizleyici ve yükleme ekranı henüz uygulanmamıştır. Çalışan kodun tamamlanma durumunu [uygulama farkları](#uygulama-farkları) bölümünden izleyin.
+Katalog sürümü: **1.1 — 30 Ekim 2026**. Kurallar `backend/portal/ingestion/` modüllerinde uygulanır; yükleme ekranı aynı kural kimliklerini gösterir. Kapsam ve sınırlar [uygulama durumu](#uygulama-durumu) bölümünde, çalıştırılmış kontroller [doğrulama kaydında](verification.md) belirtilir.
 
 Her kuralın sabit bir kimliği ve kendi sürümü vardır. İşlem günlüğü, formülü açıklama metnine kopyalamak yerine örneğin `DQ-015 / v1` kaydına başvurur. Kuralın anlamı değişirse sürümü yükselir; eski işlem kayıtları eski sürüme bağlı kalır. Kimlikler yeniden numaralandırılmaz veya başka bir amaç için kullanılmaz. Önceki sürüm tanımları korunur.
 
@@ -65,6 +65,13 @@ Tablodaki bütün kuralların ilk sürümü `v1`'dir. “Boş bırak” davranı
 | DQ-020 | İşlem izi                           | Her değişiklik, dışlama, belirsizlik ve eşleşme sorunu kural kimliği + sürümüyle kaydedilir. Özgün dosya bir kez korunur.                                                                             | Yönetici özeti ve ayrıntı görünümü aynı işlem kayıtlarından üretilir. Değişmeyen her hücre için ayrı log yazılmaz.                                                                                                              |
 | DQ-021 | Yeniden yükleme / kayıt bütünlüğü   | Aynı dosya veya çağrı yeniden geldiğinde mevcut içerik karşılaştırılır. Tam tekrar çoğaltılmaz; değişen içerik çelişki olarak değerlendirilir. Son ilişkiler ve kısıtlar kayıt öncesi kontrol edilir. | Çağrı ve kalite yazımları atomiktir. Veritabanı hatası sessizce kısmi rapor üretmez; işlem başarısızlığı kayda geçer.                                                                                                           |
 
+## DQ-013 sürüm geçmişi
+
+- **v1 / katalog 1.0:** Küçük harfe dönüştürülmüş etiket yalnızca `satis`, `satış`, `ret`, `geri_ara`, `geri ara`, `ulasilamadi`, `ulaşılamadı` listesiyle eşleştirilirdi. Kısmen Türkçe yazılmış `ulasılamadı` bu listede bulunmadığından boş sonuç olarak kaydedilirdi.
+- **v2 / katalog 1.1:** Yalnızca sonuç etiketinde büyük/küçük harf, `İ/I/ı/i` ve `Ş/ş/s` karşılıkları standartlaştırılır. Ardından bilinen sonuç sözlüğüyle tam eşleşme aranır. `ulasılamadı`, `ulaşilamadi`, `ULAŞILAMADI` aynı `ResultId=4` değerine karşılık gelir. Temsilci/kampanya adları bu işlemden etkilenmez. Kelime benzerliğine göre tahmin yapılmaz; `???`, `ulaşıldı` ve sözlükte olmayan ifadeler boş kalır.
+
+Yeni eşleştirmeler `DQ-013 v2` ile kaydedilir. Eski yükleme sürümü ve özgün satır değiştirilmez. Önceden boş kaydedilmiş sonuçlar için [onarım komutu](data-imports.md#mevcut-boş-çağrı-sonuçlarını-onarma) ayrı bir düzeltme izi oluşturur; eski bilinmeyen-sonuç kaydını silmeden çözüldü olarak işaretler. Diğer kuralların sürümü 1 olarak kalır.
+
 ## Alanların izlediği yollar
 
 | Alan                             | Kural yolu                                               |
@@ -79,7 +86,7 @@ Tablodaki bütün kuralların ilk sürümü `v1`'dir. “Boş bırak” davranı
 | Kalite–çağrı ilişkisi            | DQ-018; çağrıda değerlendirme yoksa DQ-019               |
 | Her değişiklik ve sorun          | DQ-020                                                   |
 
-Kampanya ve değerlendirici adlarında güvenilir metin standartlaştırması uygulanır. Farklı adların aynı varlık olduğu benzerlikten hareketle varsayılmaz. Yeni / eksik kampanya eşleştirmeleri ile değerlendirici zorunluluğunun ayrıntıları, yükleyici uygulamasında açık doğrulama olarak tamamlanacaktır.
+Kampanya, takım ve değerlendirici adları standartlaştırılmış tam adla eşleştirilir; benzerlikten kişi veya kurum tahmini yapılmaz. Aynı ada birden fazla varlık karşılık geliyorsa satır incelemeye ayrılır. Boş/geçersiz değerlendirici kaliteyi engeller. Yeni kampanya/takımın adı 12 karakterlik kimlik sözleşmesine uymuyorsa addan deterministik bir kimlik türetilir; adın kendisi korunur. Ayrıntılar: [yükleme akışı](data-imports.md).
 
 ## Tarih karar akışı
 
@@ -156,14 +163,15 @@ Bir alana birden fazla dönüşüm uygulanırsa sıra korunur. İlk özgün değ
 
 Yönetici önce toplam satır, benzersiz çağrı, düzeltilen alan, etkilenen benzersiz çağrı, tekrar, bekleyen eşleşme ve inceleme sayılarını görür. Kural bazlı adetler açılabilir. Bir çağrı birden fazla kurala takılabileceğinden, kural adetlerinin toplamı “etkilenen çağrı sayısı” diye sunulmaz. Ayrıntılara rol kapsamı uygulanır.
 
-## Uygulama farkları
+## Uygulama durumu
 
-Bu katalog tamamlanmış temizleyici kodu anlamına gelmez. Mevcut şemadan uygulamaya geçerken:
+Yükleme API'si ve arayüzü bu katalogla bağlandı:
 
-1. `Call.started_at` boş değere izin verecek migration ile güncellenmeli.
-2. Ham yükleme modelleri korunmalı; alan bazlı önce / sonra, kural sürümü ve kanıt kaydı için yapılandırılmış alanlar tamamlanmalı.
-3. Case için `agents.csv` kadro eşleştirmesi ve kaptanın tarihsiz çağrılara erişim kapsamı uygulanmalı. Mevcut tarihsel üyelik sorgusu bu kararı tek başına karşılamıyor.
-4. Q1 profili, kural kimlikleri ve uygulama fonksiyonları aynı kataloğa bağlanmalı.
-5. Yükleme API'si ve ekranı bu işlem akışını kullanmalı. Sonrasında KPI ve Excel aynı temiz kayıt kaynağından beslenmeli.
+1. `0004` migration'ı `Call.started_at` alanını NULL kabul edecek biçimde değiştirir ve yapılandırılmış işlem izi alanlarını ekler.
+2. Özgün dosya/satır, temizlenmiş alanlar ve sıralı önce/sonra kayıtları ayrı korunur. Katalog sürümü yüklemede, kural sürümü işlem kaydında sabittir.
+3. Kaptanın çağrı kapsamı, tarihten bağımsız olarak temsilcinin güncel takımını kullanır. Bilinmeyen temsilciler hiçbir kaptanın kapsamına girmez.
+4. Q1 açıkça seçilir; başka dosyalara katsayı eğitimi veya otomatik profil tahmini yapılmaz. Kaynak alt puan hassasiyeti kanıtlanmadığı için DQ-016 aralığı kaydeder, tek bir sayı uydurmaz.
+5. DQ-009 yalnızca kullanıcı tarafından belirtilmiş kaynak dönemi ve açık tarihler tek yorumu destekliyorsa çalışır. Bunlar yoksa belirsiz tarih NULL kalır.
+6. [KPI hesaplama servisi](reporting-api.md) temiz kayıtlardan beslenir; tarih/süre/kalite eksikliği kuralları sorgularda uygulanır. Dashboard gösterimi ve Excel çıktısı henüz bağlı değildir.
 
 Kaynak case belgeleri ve CSV dosyaları yerinde değiştirilmez. Katalogda önerilen inceleme ve log davranışları, gerçek yükleme sırasında kaynak kayıtların üzerine yazmayı gerektirmez.

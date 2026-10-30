@@ -1,4 +1,4 @@
-"""Scope every query at the server, including calls evaluated at their historical team."""
+"""Server-side role scope; case reports use the current roster, including undated calls."""
 
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
@@ -23,12 +23,12 @@ def scoped_teams(user):
     )
 
 
-def scoped_agents(user):
+def scoped_agents(user, *, at=None):
     if not permitted(user):
         return Agent.objects.none()
     if user.role_id != "captain":
         return Agent.objects.all()
-    instant = timezone.now()
+    instant = at if at is not None else timezone.now()
     memberships = AgentTeamAssignment.objects.filter(
         agent_id=OuterRef("pk"), team_id=user.team_id, valid_from__lte=instant
     ).filter(Q(valid_to__isnull=True) | Q(valid_to__gt=instant))
@@ -55,18 +55,13 @@ def scoped_links(user):
     )
 
 
-def scoped_calls(user):
+def scoped_calls(user, *, at=None):
     """Unknown agents stay in company totals but cannot leak into a captain's scope."""
     if not permitted(user):
         return Call.objects.none()
     if user.role_id != "captain":
         return Call.objects.all()
-    memberships = AgentTeamAssignment.objects.filter(
-        agent_id=OuterRef("agent_id"),
-        team_id=user.team_id,
-        valid_from__lte=OuterRef("started_at"),
-    ).filter(Q(valid_to__isnull=True) | Q(valid_to__gt=OuterRef("started_at")))
-    return Call.objects.filter(Exists(memberships))
+    return Call.objects.filter(agent_id__in=scoped_agents(user, at=at).values("pk"))
 
 
 def capabilities(user):

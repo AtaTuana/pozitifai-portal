@@ -73,3 +73,27 @@ Bu adımlar genel kontroldür; kullanıcının tarayıcı/GPU tanısı incelenme
 - `TEAM002`: Takım üyeliği dönemleri çakışıyor. Var olan dönem kapanmadan yeni dönem açılamaz.
 
 Şema geçişinden sonra eski oturumlar kapanır. Portalı `start.bat` ile yeniden başlatıp mevcut e-posta ve şifreyle giriş yapın. Planlama kimlikleri değiştiği için açık eski sekmeyi yenileyin. Kayıt kimliği en fazla 12 karakterdir ve oluşturulduktan sonra sabittir.
+
+## Dosya yükleme
+
+| Kod           | Yapılacak işlem                                                                                                                                                                            |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| IMP001        | Dosyayı portalın uygun yükleme alanından gönderin; türü/istek biçimi geçersiz.                                                                                                             |
+| IMP002        | CSV için tek `.csv`; transkript için en fazla 50 `.txt` seçin. Transkript adı çağrı kimliği olmalı.                                                                                        |
+| IMP003        | Tek dosya 5 MB, toplam istek 10 MB, CSV 20.000 veri satırı sınırını aşmış olabilir. Kaynağı bölerek yükleyin.                                                                              |
+| IMP004        | Transkript boş; konuşma içeren özgün TXT dosyasını seçin.                                                                                                                                  |
+| IMP005        | Kalite profilini veya isteğe bağlı kaynak döneminin iki tarihini kontrol edin.                                                                                                             |
+| IMP006        | Geçmişi yenileyin; istenen yükleme, sayfa veya kural numarası geçersiz.                                                                                                                    |
+| IMP007        | Aynı ada birden fazla varlık veya kimlik çakışması var. Planlamadaki adları inceleyin; benzerlik üzerinden otomatik birleştirme yapılmaz.                                                  |
+| IMP008        | Veritabanı bağlantısını ve migration durumunu kontrol edin. Portalı PG ayarlarının bulunduğu terminalden yeniden başlatın. Önce geçmişi yenileyin; gerekirse aynı dosyayla tekrar deneyin. |
+| DQ-001        | Özgün kaynağı doğru kodlamayla UTF-8 CSV/TXT olarak yeniden dışa aktarın. Kayıp karakterler tahminle doldurulmaz.                                                                          |
+| DQ-002        | CSV başlıklarını, sütun sayısını, tırnakları ve ayıracı kontrol edin. Kalite dosyası noktalı virgülle ayrılabilir.                                                                         |
+| DQ-005–DQ-021 | Bunlar satır kararlarının katalog kimlikleridir. Yükleme geçmişindeki **İncele** alanında önce/sonra, gerekçe ve rapora etkisini okuyun; her kayıt uygulama hatası değildir.               |
+
+**Yanıt gelmedi fakat dosya işlendi mi?** Ağ zaman aşımı sunucunun işlemi iptal ettiği anlamına gelmez. Yükleme geçmişini yenileyin. Aynı dosya aynı seçeneklerle yeniden gönderildiğinde tamamlanmış kayıt yeniden kullanılır.
+
+**Kalite eşleşme bekliyor:** Önce ilgili çağrıları yükleyin. Sonraki yükleme bekleyen ilişkileri tekrar kontrol eder. Çağrı eşleşse bile puan tutarsızlığı varsa bu sorun ayrıca görünür.
+
+**Yükleme alanı görünmüyor:** Takım kaptanı yükleyemez. Çağrı/kalite/transkript için admin veya yönetici; temsilci kadrosu için admin gerekir.
+
+**HTTP 413 / dosya çok büyük:** Portalın tek dosya/toplam sınırlarına uyun. Araya ek bir proxy konduysa onun istek sınırı da dosyayı engelleyebilir.

@@ -12,6 +12,7 @@ export class ApiError extends Error {
 
 /** Cookies remain HttpOnly. Only the masked CSRF token is held in JavaScript memory. */
 export async function api<T>(path: string, method = 'GET', payload?: unknown): Promise<T> {
+  const multipart = payload instanceof FormData;
   let response: Response;
   try {
     response = await fetch(`/api${path}`, {
@@ -19,16 +20,18 @@ export async function api<T>(path: string, method = 'GET', payload?: unknown): P
       credentials: 'same-origin',
       cache: 'no-store',
       headers: {
-        'Content-Type': 'application/json',
+        ...(multipart ? {} : { 'Content-Type': 'application/json' }),
         ...(method !== 'GET' ? { 'X-CSRFToken': csrf } : {}),
       },
-      ...(payload === undefined ? {} : { body: JSON.stringify(payload) }),
-      signal: AbortSignal.timeout(15_000),
+      ...(payload === undefined ? {} : { body: multipart ? payload : JSON.stringify(payload) }),
+      signal: AbortSignal.timeout(multipart ? 120_000 : 15_000),
     });
   } catch {
     throw new ApiError(
       'NET001',
-      'Sunucuya ulaşılamadı. Portalın başlatma penceresini kontrol et.',
+      multipart
+        ? 'Yükleme yanıtı alınamadı. Sunucu işlemi tamamlamış olabilir; yükleme geçmişini yenile. Aynı dosyayla tekrar denemek kayıtları çoğaltmaz.'
+        : 'Sunucuya ulaşılamadı. Portalın başlatma penceresini kontrol et.',
       0,
     );
   }
