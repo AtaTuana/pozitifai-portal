@@ -109,3 +109,12 @@ Sonraki katman düzeltmesi: navbar camı girişte kaldırıldı; arka üst cam v
 - Case PDF okunarak README; sıfırdan Windows kurulumu, portal kullanımı, DQ-001–DQ-021 kararları, KPI paydaları, Excel filtreleri, roller, mimari, sınırlar ve eksikler üzerinden yeniden düzenlendi. Kaynak PDF/CSV/TXT belgeleri değiştirilmedi.
 - Prompt metni uygulamanın sürümlü dosyasından README’ye aynen alındı. Ortam alanları için gerçek sır içermeyen `.env.example` eklendi; bu dosyanın otomatik yüklenmediği belirtildi.
 - Eski kurulum/rol anlatımları yardımcı belgelerde güncellendi. Temsilci sıralaması eksikliği, farklı Excel dışa aktarma kapsamı ve ölçülmemiş sınıflandırma/KPI doğruluğu açık bırakıldı.
+
+## 2026-10-30 — Temsilci performansları
+
+- Önceki kayıtlarda belirtilen temsilci sıralaması eksikliği giderildi. Ayrı sidebar ekranı; Türkçe ad sırası, metrik/yön seçimi, takım/kampanya/tarih filtreleri, baş harfli profil simgesi ve işe başlama tarihi eklendi.
+- Profil, aynı kampanyada seçili dönem ve tüm zamanlar hesaplarını; saatlik çağrı/ulaşma dağılımını ve kalite bileşenlerini gösterir. Hesaplar mevcut KPI toplama/payda kurallarını paylaşır.
+- İzole SQLite üzerinde yeni 6 performans senaryosu ve mevcut 12 KPI senaryosu geçti (18 test). Tarih uçları, tarihsiz kayıtlar, boş kadro performansı, gerçek sıfır puan, aynı adlı temsilciler, güncel takım kapsamı, yetkisiz profil ve rol değişimi kontrol edildi. Neon'a veri yazılmadı.
+- Türkçe sıralama, eşit sıralar ve null/sıfır ayrımı için `node --experimental-strip-types --test scripts/performance.test.mjs` içindeki 2 test geçti.
+- TypeScript kontrolü ve Vite üretim derlemesi başarılı. Ayrı SQLite örnekleriyle tarayıcıda giriş, ad/ölçüt sırası, tarih filtresi, profil, kampanya değişimi ve geri dönüş kontrol edildi. Açık/koyu tema ve 390px dar ekran görünümünde yatay taşma saptanmadı; tarayıcı konsolunda hata görülmedi.
+- Bu kontroller gerçek case verisinin bağımsız KPI mutabakatı veya PostgreSQL yük testi değildir. Kaynak CSV'ler ve gerçek veritabanı değiştirilmedi.

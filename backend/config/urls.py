@@ -13,6 +13,8 @@ urlpatterns = [
     path("api/planning", planning.planning),
     path("api/workspace", planning.workspace),
     path("api/reports/kpis", reports.kpis),
+    path("api/reports/agents", reports.agents),
+    path("api/reports/agents/<str:agent_id>", reports.agents),
     path("api/reports/excel", reports.excel),
     path("api/rejections", rejections.overview),
     path("api/rejections/analyze", rejections.analyze),

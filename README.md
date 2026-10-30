@@ -172,15 +172,16 @@ CSV'nin gerekli başlıkları bulunmalıdır. Virgül, noktalı virgül ve sekme
 
 ### Ekranlarda neler yapılır?
 
-| Ekran                    | Kullanım                                                                                                                                                                                                               |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Genel bakış**          | Üst sekmeden kampanya; sayfa içinden takım, temsilci ve başlangıç/bitiş tarihi seçilir. KPI'lar ve saatlik grafik yeniden hesaplanır. **Sıfırla** sayfa içi filtreleri kaldırır; kampanya üst sekmeden ayrıca seçilir. |
-| **Reddedilme nedenleri** | Tüm zamanlar veya tarih aralığı seçilir. Admin/yönetici **Analiz Başlat** ile uygun konuşmaları analiz ettirir. Kategorinin çubuğuna, ardından konuşmaya tıklanarak temsilci/müşteri mesajları görülür.                |
-| **Takım planlama**       | Admin takım/kampanya/temsilci kayıtlarını ve bağlantılarını düzenler, **Kaydet** ile uygular. Kaydedilmemiş taslak veritabanına yazılmaz. Takım kaptanı bu özelliği kullanamaz.                                        |
-| **Temsilciler**          | Kadro görüntülenir; admin kadro dosyasını yükleyebilir. Bu liste performans sıralaması değildir.                                                                                                                       |
-| **Veri yükleme**         | Çağrı, kalite ve transkript dosyaları yüklenir; hata ve düzeltme kayıtları incelenir.                                                                                                                                  |
-| **Kullanıcılar**         | Admin hesap oluşturur, rol ve takım kapsamı verir. Temsilci bir personel kaydıdır; kendisine portal hesabı oluşturulması gerekmez.                                                                                     |
-| **İşlem geçmişi**        | Admin, giriş, yönetim, yükleme, rapor ve analiz işlemlerinin son 200 olay özetini inceler.                                                                                                                             |
+| Ekran                       | Kullanım                                                                                                                                                                                                               |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Genel bakış**             | Üst sekmeden kampanya; sayfa içinden takım, temsilci ve başlangıç/bitiş tarihi seçilir. KPI'lar ve saatlik grafik yeniden hesaplanır. **Sıfırla** sayfa içi filtreleri kaldırır; kampanya üst sekmeden ayrıca seçilir. |
+| **Reddedilme nedenleri**    | Tüm zamanlar veya tarih aralığı seçilir. Admin/yönetici **Analiz Başlat** ile uygun konuşmaları analiz ettirir. Kategorinin çubuğuna, ardından konuşmaya tıklanarak temsilci/müşteri mesajları görülür.                |
+| **Takım planlama**          | Admin takım/kampanya/temsilci kayıtlarını ve bağlantılarını düzenler, **Kaydet** ile uygular. Kaydedilmemiş taslak veritabanına yazılmaz. Takım kaptanı bu özelliği kullanamaz.                                        |
+| **Temsilci performansları** | Ad soyada göre açılan karşılaştırma grafiği; ölçüt ve yön seçerek sıralama. Temsilciye tıklayınca işe başlama tarihi, dönem/tüm zamanlar KPI’ları, saatlik dağılım ve kalite bileşenleri açılır.                       |
+| **Temsilciler**             | Kadro görüntülenir; admin kadro dosyasını yükleyebilir. Performans karşılaştırması ayrı **Temsilci performansları** ekranındadır.                                                                                      |
+| **Veri yükleme**            | Çağrı, kalite ve transkript dosyaları yüklenir; hata ve düzeltme kayıtları incelenir.                                                                                                                                  |
+| **Kullanıcılar**            | Admin hesap oluşturur, rol ve takım kapsamı verir. Temsilci bir personel kaydıdır; kendisine portal hesabı oluşturulması gerekmez.                                                                                     |
+| **İşlem geçmişi**           | Admin, giriş, yönetim, yükleme, rapor ve analiz işlemlerinin son 200 olay özetini inceler.                                                                                                                             |
 
 Sayfayı yenilemek veya tarihler arasında gezinmek kendiliğinden AI isteği göndermez. Her filtre yetki kapsamınızın içinde çalışır; bir takım kaptanı filtreyi değiştirerek başka takımın verilerini göremez.
 
@@ -651,7 +652,7 @@ ORM, Python nesneleri üzerinden veritabanı sorgusu kuran katmandır. Migration
 | `scripts/windows-runtimes.ps1`                     | Node/npm/Python bulma ve eksik programların kurulumu.                             |
 | `scripts/windows-settings.ps1`, `local-config.mjs` | Gizli giriş, yerel kayıt ve ayar önceliği.                                        |
 | `scripts/start.mjs`, `backend.mjs`                 | npm/Python paketleri, Django hazırlığı, API ve arayüz süreçlerinin yaşam döngüsü. |
-| `frontend/src/App.tsx`, `frontend/src/api/`        | Oturum durumu, ekran seçimi ve backend iletişimi.                                 |
+| `frontend/src/app/App.tsx`, `frontend/src/api/`    | Oturum durumu, ekran seçimi ve backend iletişimi.                                 |
 | `frontend/src/features/`                           | Dashboard, yükleme, planlama, hesap ve ret analizi ekranları.                     |
 | `frontend/src/config/visual.config.ts`             | Blur, perspektif, su izi ve grafik hareketlerinin ortak görsel ayarları.          |
 | `backend/config/settings.py`, `urls.py`            | Bağlantı/güvenlik ayarları ve URL → fonksiyon eşleştirmesi.                       |
@@ -665,6 +666,10 @@ ORM, Python nesneleri üzerinden veritabanı sorgusu kuran katmandır. Migration
 | `backend/portal/tests/`                            | İzole verilerle doğrulama senaryoları; çalıştırılma kapsamı ayrıca belgelenir.    |
 
 Normal bir girişte arayüz `/api/session` ile oturumu öğrenir, `/api/login` ile kimlik bilgilerini gönderir; Django doğrulamadan sonra oturum açar. `/api/workspace` yetkili takım/temsilci/kampanyaları döndürür. Dashboard `/api/reports/kpis`, indirme `/api/reports/excel`, yükleme `/api/imports`, ret analizi `/api/rejections` uçlarını kullanır. Sayfaların görünürlüğü yanında her API çağrısında sunucu kontrolü vardır.
+
+Temsilci karşılaştırması `/api/reports/agents`, profil detayı `/api/reports/agents/<agent_id>` üzerinden okunur. `backend/portal/reporting/agents.py` güncel kadro kapsamını ortak KPI formülleriyle birleştirir. `frontend/src/features/performance/` filtre, sıralama, grafik ve profil bileşenlerini içerir.
+
+Sıralama kuralları: başlangıçta Türkçe ad soyad sırası; sayısal ölçütte varsayılan azalan, isteğe göre artan yön. Eşit değerler aynı sırayı paylaşır; ölçülemeyen değerler her iki yönde de sonda kalır. Sıfır kalite puanı gerçek bir ölçümdür, eksik puan değildir. Çağrısı olmayan temsilciler kadroda korunur. Tarihsiz çağrılar yalnız tüm zamanlar hesaplarına katılır. Temsilcisi bilinmeyen çağrılar şirket raporunda korunur, kişi sıralamasına dağıtılmaz. Profilde tüm zamanlar hesabı yalnız tarih sınırını kaldırır; kampanya ve rol kapsamını korur. Oranların yanında örneklem sayısı gösterilir; konuşma süresinin uzun olması tek başına başarı sayılmaz. Kaptan başka takımın profil adresini doğrudan açsa da `RPT004` (404) yanıtı alır.
 
 <a id="yetkiler"></a>
 
@@ -726,22 +731,23 @@ Tam hata kodları ve çözüm adımları: [Sorun giderme kılavuzu](docs/trouble
 
 README, mevcut uygulamanın durumunu anlatır; aşağıdaki eksikler tamamlanmış olarak değerlendirilmemelidir.
 
-| Case beklentisi                                            | Durum / açıklama                                                                                                                                                                                                      |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Üç CSV'nin veritabanına alınması ve temizlenmesi           | Portal yükleyicisi ve ortak Python temizleme servisleri mevcut. Satır/alan kararları kaynaklarıyla tutuluyor.                                                                                                         |
-| Düzeltilemeyen verinin hata raporu                         | Yükleme geçmişindeki tablo ve ayrıntı ekranı mevcut. Alan bazında koruma/dışlama yorumu bu README'de açıklandı.                                                                                                       |
-| KPI'ların genel ve temsilci/takım/kampanya/gün kırılımları | Backend servisi hesaplıyor. Dashboard filtrelenmiş özeti ve saatlik grafiği gösteriyor; bütün birleşik kırılımlar ayrı UI tabloları olarak sunulmuyor.                                                                |
-| Tarih, temsilci ve kampanya filtreleri                     | Mevcut; ayrıca takım filtresi ve rol kapsamı var.                                                                                                                                                                     |
-| Genel özet ve saatlik yoğunluk                             | Dashboard'da mevcut.                                                                                                                                                                                                  |
-| **Temsilci sıralaması**                                    | **Eksik.** Temsilci bazlı KPI API'si var; performansa göre sıralayan karşılaştırma ekranı yok. Geliştirmede KPI widget'ları, veri temizliği ve Excel'e öncelik verildi. Temsilciler listesi bu isterin yerine geçmez. |
-| Filtrelenmiş Excel                                         | Summary portal seçimleriyle açılıyor. Sonradan filtre değiştirilebilmesi için RawData bütün yetkili veriyi içeriyor; yalnız görünür filtredeki satırları içeren exporttan farklı.                                     |
-| Bonus ret analizi                                          | LLM entegrasyonu ve ayrı web raporu mevcut. Ret kategori grafiği Excel'e eklenmedi; XLSX şablonu KPI raporu olarak korundu.                                                                                           |
-| Kurulum ve kararların README'de anlatılması                | Windows başlatıcısı, adım adım kılavuz, teknoloji gerekçeleri, temizleme kararları ve tam prompt burada.                                                                                                              |
+| Case beklentisi                                            | Durum / açıklama                                                                                                                                                                                                 |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Üç CSV'nin veritabanına alınması ve temizlenmesi           | Portal yükleyicisi ve ortak Python temizleme servisleri mevcut. Satır/alan kararları kaynaklarıyla tutuluyor.                                                                                                    |
+| Düzeltilemeyen verinin hata raporu                         | Yükleme geçmişindeki tablo ve ayrıntı ekranı mevcut. Alan bazında koruma/dışlama yorumu bu README'de açıklandı.                                                                                                  |
+| KPI'ların genel ve temsilci/takım/kampanya/gün kırılımları | Backend servisi hesaplıyor. Dashboard filtrelenmiş özeti ve saatlik grafiği gösteriyor; bütün birleşik kırılımlar ayrı UI tabloları olarak sunulmuyor.                                                           |
+| Tarih, temsilci ve kampanya filtreleri                     | Mevcut; ayrıca takım filtresi ve rol kapsamı var.                                                                                                                                                                |
+| Genel özet ve saatlik yoğunluk                             | Dashboard'da mevcut.                                                                                                                                                                                             |
+| **Temsilci sıralaması**                                    | **Var.** Temsilci performansları ekranında ad soyad, satış, çağrı, ulaşma, dönüşüm, kalite ve süreye göre sıralama; takım/kampanya/tarih filtreleri ve seçili dönem–tüm zamanlar profil karşılaştırması bulunur. |
+| Filtrelenmiş Excel                                         | Summary portal seçimleriyle açılıyor. Sonradan filtre değiştirilebilmesi için RawData bütün yetkili veriyi içeriyor; yalnız görünür filtredeki satırları içeren exporttan farklı.                                |
+| Bonus ret analizi                                          | LLM entegrasyonu ve ayrı web raporu mevcut. Ret kategori grafiği Excel'e eklenmedi; XLSX şablonu KPI raporu olarak korundu.                                                                                      |
+| Kurulum ve kararların README'de anlatılması                | Windows başlatıcısı, adım adım kılavuz, teknoloji gerekçeleri, temizleme kararları ve tam prompt burada.                                                                                                         |
 
 ### Doğrulananlar ve henüz doğrulanmayanlar
 
 Tarihli kayıtlar [verification.md](docs/verification.md) içindedir. Eski bir testin geçmiş olması, sonraki her değişikliğin veya bütün üretim ortamlarının doğrulandığı anlamına gelmez.
 
+- Temsilci performansları için izole SQLite üzerinde 18 raporlama/yetki testi ve Türkçe sıralama için 2 Node testi geçti. Ayrı örnek verilerle liste, profil, filtreler, açık/koyu tema ve dar ekran akışları tarayıcıda kontrol edildi.
 - Geliştirme aşamalarında TypeScript/Django kontrolleri ve frontend derlemesi çalıştırıldı. Ret analizi için taklit sağlayıcıyla izole SQLite üzerinde 10 test geçti.
 - Windows başlatıcısının mevcut programları bulması, ayar soruları, kayıt önceliği, anahtarı atlama ve güvenli hata davranışı odaklı kontrollerden geçti. **Sıfırdan temiz Windows cihazında otomatik program kurulumunun tamamı henüz denenmedi.**
 - Excel formülleri geçici örneklerle kurulu Excel 16.0 üzerinde kontrol edildi; kullanıcı portal üzerinden dosyayı indirdiğini doğruladı. Ayrı, sabit bir Excel 2016 kurulumu üzerinde bağımsız uçtan uca test yapılmış sayılmaz.
@@ -769,20 +775,21 @@ Geliştirme, proje sahibinin iş kuralları/tasarım kararları ve AI kod asista
 
 Bu bölüm normal Windows kullanıcısının kurulum adımı değildir. Teknik inceleme ve sorun giderme içindir. Komutlar `start.bat` ile aynı proje klasöründe çalıştırılır.
 
-| Komut                        | İşlev                                                                                                                                   |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `.\start.bat`                | Windows program kontrolü/kurulumu, ayar soruları, Django ve Vite başlatma.                                                              |
-| `.\start.bat --configure`    | Ayarları yeniden sorar; Enter mevcut değeri korur.                                                                                      |
-| `.\start.bat --check-tools`  | Yalnız program kontrolü; kurulum, ayar kaydı veya DB bağlantısı yapmaz.                                                                 |
-| `.\start.bat --no-open`      | Portalı başlatır, tarayıcıyı otomatik açmaz.                                                                                            |
-| `.\start.bat --prepare-only` | Program/paket ve DB hazırlığı; ayar soruları, admin ve sunucu yok. PG ayarı yoksa doğrudan Node akışındaki SQLite davranışı geçerlidir. |
-| `npm start`                  | Mevcut Node başlatıcısı; Windows program kurulumu ve ayar soruları yok.                                                                 |
-| `npm run setup:local`        | Terminalde tanımlı ayarları yerel dosyaya kaydeder.                                                                                     |
-| `npm run check:openai`       | Tek küçük ücretlenebilir API isteğiyle bağlantı kontrolü. Transkript göndermez.                                                         |
-| `npm run check`              | TypeScript kontrolü.                                                                                                                    |
-| `npm run build`              | Frontend üretim derlemesi.                                                                                                              |
-| `npm run test:graphics`      | Perspektif/hareket matematiğinin testleri.                                                                                              |
-| `npm run format:check`       | Kaynak ve Markdown biçim kontrolü.                                                                                                      |
+| Komut                                                                 | İşlev                                                                                                                                   |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `.\start.bat`                                                         | Windows program kontrolü/kurulumu, ayar soruları, Django ve Vite başlatma.                                                              |
+| `.\start.bat --configure`                                             | Ayarları yeniden sorar; Enter mevcut değeri korur.                                                                                      |
+| `.\start.bat --check-tools`                                           | Yalnız program kontrolü; kurulum, ayar kaydı veya DB bağlantısı yapmaz.                                                                 |
+| `.\start.bat --no-open`                                               | Portalı başlatır, tarayıcıyı otomatik açmaz.                                                                                            |
+| `.\start.bat --prepare-only`                                          | Program/paket ve DB hazırlığı; ayar soruları, admin ve sunucu yok. PG ayarı yoksa doğrudan Node akışındaki SQLite davranışı geçerlidir. |
+| `npm start`                                                           | Mevcut Node başlatıcısı; Windows program kurulumu ve ayar soruları yok.                                                                 |
+| `npm run setup:local`                                                 | Terminalde tanımlı ayarları yerel dosyaya kaydeder.                                                                                     |
+| `npm run check:openai`                                                | Tek küçük ücretlenebilir API isteğiyle bağlantı kontrolü. Transkript göndermez.                                                         |
+| `npm run check`                                                       | TypeScript kontrolü.                                                                                                                    |
+| `npm run build`                                                       | Frontend üretim derlemesi.                                                                                                              |
+| `npm run test:graphics`                                               | Perspektif/hareket matematiğinin testleri.                                                                                              |
+| `node --experimental-strip-types --test scripts/performance.test.mjs` | Türkçe sıralama, eşit sıralar ve eksik puan davranışı.                                                                                  |
+| `npm run format:check`                                                | Kaynak ve Markdown biçim kontrolü.                                                                                                      |
 
 macOS/Linux'ta otomatik Windows kurucusu kullanılmaz. Node.js **22.12+** ve Python **3.11–3.14** önceden kurulu olmalı; proje kökünden `npm start` çalıştırılır. Kayıtlı ayarlar veya ortam değişkenleri kullanılabilir. PG ayarları verilmezse bu doğrudan akış SQLite'a gider; ortak Neon verisini kendiliğinden bulmaz. Bu platformlarda temiz kurulum doğrulanmış değildir.
 

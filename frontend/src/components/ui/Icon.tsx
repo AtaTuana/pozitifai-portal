@@ -1,4 +1,5 @@
 const paths = {
+  performance: 'M3 21h18M5 17V9h4v8m3 0V3h4v14m3 0v-5h2v5',
   rejections:
     'M21 11a8 8 0 0 1-8 8H7l-4 3v-6a8 8 0 0 1-1-4 9 9 0 0 1 9-9h2a8 8 0 0 1 8 8ZM7 12v2m4-6v6m4-4v4',
   headset: 'M4 13V10a8 8 0 0 1 16 0v3M4 11H2v7h4v-7H4Zm16 0h2v7h-4v-7h2Zm0 7v2a2 2 0 0 1-2 2h-5',

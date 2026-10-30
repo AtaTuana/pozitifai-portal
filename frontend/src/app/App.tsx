@@ -20,6 +20,11 @@ const DashboardPage = lazy(() =>
     default: module.DashboardPage,
   })),
 );
+const PerformancePage = lazy(() =>
+  import('../features/performance/PerformancePage').then((module) => ({
+    default: module.PerformancePage,
+  })),
+);
 const PlanningPage = lazy(() =>
   import('../features/planning/PlanningPage').then((module) => ({
     default: module.PlanningPage,
@@ -36,6 +41,7 @@ const RejectionsPage = lazy(() =>
   })),
 );
 const validViews: View[] = [
+  'performance',
   'rejections',
   'workspace',
   'planning',
@@ -220,7 +226,7 @@ export function App() {
         campaign={campaign}
         onCampaign={(id) => {
           setCampaign(id);
-          if (view !== 'rejections') navigate('workspace');
+          if (view !== 'rejections' && view !== 'performance') navigate('workspace');
         }}
         onMenu={() => setMobileOpen(!mobileOpen)}
         menuOpen={mobileOpen}
@@ -282,6 +288,24 @@ export function App() {
               >
                 <RejectionsPage
                   key={campaign}
+                  campaignId={plan.nodes.find((node) => node.id === campaign)?.code || ''}
+                  campaignName={
+                    plan.nodes.find((node) => node.id === campaign)?.name || 'Tüm kampanyalar'
+                  }
+                />
+              </Suspense>
+            )}
+            {view === 'performance' && (
+              <Suspense
+                fallback={
+                  <p className="loading-state" role="status">
+                    Temsilci performansları açılıyor…
+                  </p>
+                }
+              >
+                <PerformancePage
+                  plan={plan}
+                  user={user}
                   campaignId={plan.nodes.find((node) => node.id === campaign)?.code || ''}
                   campaignName={
                     plan.nodes.find((node) => node.id === campaign)?.name || 'Tüm kampanyalar'

@@ -9,10 +9,39 @@ from zipfile import BadZipFile
 from .fields import BUSINESS_TIMEZONE
 from .http import ApiError, audit, endpoint
 from .reporting import calculate_report, parse_query
+from .reporting.agents import agent_performance
 from .reporting.excel import collect_export, render_workbook
 from .reporting.excel.workbook import WorkbookError
 
 logger = logging.getLogger(__name__)
+
+
+@endpoint(["GET"])
+def agents(request, agent_id=None):
+    """Roster and profile are read-only reports, with scope checked again in the service."""
+    if set(request.GET) - {"teamId", "campaignId", "dateFrom", "dateTo"}:
+        raise ApiError(
+            "RPT001",
+            "Temsilci raporunda takım, kampanya ve tarih filtreleri kullanılabilir.",
+        )
+    query = parse_query(request.GET)
+    try:
+        result = agent_performance(request.user, query, agent_id)
+        audit(
+            request,
+            "report.calculated",
+            "agent_performance",
+            agentId=agent_id,
+            filters=result["filters"],
+        )
+    except DatabaseError:
+        logger.exception("Agent performance query failed.")
+        raise ApiError(
+            "RPT003",
+            "Rapor hesaplanamadı. Veritabanı bağlantısını kontrol edip yeniden dene.",
+            503,
+        ) from None
+    return JsonResponse(result)
 
 
 @endpoint(["GET"])

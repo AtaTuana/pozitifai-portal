@@ -13,6 +13,7 @@ type Item = {
 };
 const items: Item[] = [
   { view: 'workspace', text: 'Genel bakış', icon: 'overview' },
+  { view: 'performance', text: 'Temsilci performansları', icon: 'performance' },
   { view: 'rejections', text: 'Reddedilme nedenleri', icon: 'rejections' },
   { view: 'planning', text: 'Takım planlama', icon: 'plan', planning: true },
   { view: 'agents', text: 'Temsilciler', icon: 'agent' },
