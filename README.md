@@ -2,7 +2,7 @@
 
 Satış çağrı merkezi raporlaması için React + TypeScript / Django web portalı.
 
-**Mevcut aşama:** giriş, sunucu tarafında yetkilendirme, kullanıcı/profil yönetimi ve takım–kampanya–temsilci planlaması bulunur. Giriş kartından çalışma alanına genişleyen cam geçişi, sidebar, özgün logo, 70 px navbar, açık/koyu tema, perspektif ve su izi ortak kabukta korunur. CSV/TXT yükleme, numaralı kurallarla temizleme, Q1 kalite onarımı ve alan bazında işlem izi uygulanmıştır. Filtreli KPI özeti ve birleşik kırılımlar backend API'sinde hesaplanır; dashboard gösterimi, Excel raporları ve LLM sınıflandırması henüz bağlı değildir. Çalıştırılmış kontrollerin kapsamı [doğrulama kaydında](docs/verification.md) belirtilir.
+**Mevcut aşama:** giriş, sunucu tarafında yetkilendirme, kullanıcı/profil yönetimi ve takım–kampanya–temsilci planlaması bulunur. Giriş kartından çalışma alanına genişleyen cam geçişi, sidebar, özgün logo, 70 px navbar, açık/koyu tema, perspektif ve su izi ortak kabukta korunur. CSV/TXT yükleme, numaralı kurallarla temizleme, Q1 kalite onarımı ve alan bazında işlem izi uygulanmıştır. Filtreli KPI özeti ve birleşik kırılımlar backend API'sinde hesaplanır; dashboard ve formüllü Excel indirme bağlanmıştır. LLM sınıflandırması henüz bağlı değildir. Çalıştırılmış kontrollerin kapsamı [doğrulama kaydında](docs/verification.md) belirtilir.
 
 ## Yerelde başlatma
 
@@ -76,8 +76,10 @@ backend/
     permissions.py        Rol kapsamına göre sorgu sınırları
     planning.py           Taslak doğrulama ve ilişkisel kayıt
     imports.py            Yetkili multipart yükleme ve işlem izi API'si
-    reports.py            Oturum korumalı KPI hesaplama API'si
+    reports.py            Oturum korumalı KPI ve Excel indirme API'si
     reporting/            Filtreler, yetkili sorgular, ortak KPI ve kırılım hesapları
+      excel/              Yetkili ham veri sorgusu ve XLSX doldurma
+      templates/          Formüllü rapor şablonu
     ingestion/            Ayrıştırma, temizleme, kalıcı kayıt ve geç eşleştirme
     models/               Kimlik, organizasyon, raporlama, yükleme ve analiz şeması
     services/             Atomik takım üyeliği işlemleri
@@ -92,6 +94,7 @@ frontend/src/
   features/planning/      Kütüphane, harita, özellikler, taslak geçmişi
   features/users/         Kullanıcı ve profil ekranları
   features/imports/       CSV/TXT yükleme, özetler ve kural bazında işlem izi
+  features/dashboard/     Filtreler, animasyonlu KPI göstergeleri ve Excel indirme
   features/workspace/     Sidebar ve kayıt ekranları
   components/             Ortak logo, cam, tema ve UI bileşenleri
   config/visual.config.ts  Boyut, blur, perspektif ve geçiş ayarları
@@ -102,6 +105,7 @@ scripts/                  Django ve Vite başlatıcıları
 - [Veri kalitesi kural kataloğu ve karar akışları](docs/data-quality-rules.md)
 - [Dosya yükleme ve temizleme akışı](docs/data-imports.md)
 - [Filtreli KPI ve kırılım API'si](docs/reporting-api.md)
+- [Excel raporu ve formüller](docs/excel-report.md)
 - [Neon PostgreSQL kurulum adımları](docs/cloud-postgresql.md)
 - [Görsel mimari](docs/ui-foundation.md)
 - [Güvenlik kapsamı](docs/security.md)

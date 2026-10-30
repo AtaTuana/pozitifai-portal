@@ -17,7 +17,6 @@ import { LoginPage } from "../features/auth/LoginPage";
 import { AuthGlass } from "../features/auth/AuthGlass";
 import { Sidebar } from "../features/workspace/Sidebar";
 import {
-  OverviewPage,
   AgentsPage,
   ActivityPage,
 } from "../features/workspace/RecordPages";
@@ -26,6 +25,11 @@ import { ProfilePage } from "../features/users/ProfilePage";
 import { Dialog } from "../components/ui/Dialog";
 import "../styles/portal.css";
 
+const DashboardPage = lazy(() =>
+  import("../features/dashboard/DashboardPage").then((module) => ({
+    default: module.DashboardPage,
+  })),
+);
 const PlanningPage = lazy(() =>
   import("../features/planning/PlanningPage").then((module) => ({
     default: module.PlanningPage,
@@ -265,12 +269,23 @@ export function App() {
           />
           <main id="main" className="portal-workspace" tabIndex={-1}>
             {view === "workspace" && (
-              <OverviewPage
-                campaignName={
-                  plan.nodes.find((node) => node.id === campaign)?.name ||
-                  "Tüm kampanyalar"
+              <Suspense
+                fallback={
+                  <p className="loading-state" role="status">
+                    Rapor açılıyor…
+                  </p>
                 }
-              />
+              >
+                <DashboardPage
+                  plan={plan}
+                  user={user}
+                  campaignId={plan.nodes.find((node) => node.id === campaign)?.code || ""}
+                  campaignName={
+                    plan.nodes.find((node) => node.id === campaign)?.name ||
+                    "Tüm kampanyalar"
+                  }
+                />
+              </Suspense>
             )}
             {view === "planning" && user.capabilities.allTeams && (
               <Suspense

@@ -116,6 +116,32 @@ class ReportingTests(TestCase):
             self.assertIsNone(summary["reachRate"])
             self.assertIsNone(summary["averageQualityScore"])
 
+    def test_quality_components_keep_independent_counts_and_team_scope(self):
+        QualityScore.objects.filter(call_id="A1").update(
+            greeting_score=Decimal("80"), need_analysis_score=Decimal("60")
+        )
+        QualityScore.objects.filter(call_id="A2").update(
+            need_analysis_score=Decimal("20")
+        )
+        QualityScore.objects.filter(call_id="N2").update(greeting_score=Decimal("0"))
+        QualityScore.objects.filter(call_id="C1").update(closure_score=Decimal("95.50"))
+        parts = self.report()["summary"]["qualityComponents"]
+        self.assertEqual(
+            parts["greeting"],
+            {"averageScore": 40.0, "scoreCount": 2, "scoreSum": "80.00"},
+        )
+        self.assertEqual(parts["needAnalysis"]["averageScore"], 40)
+        self.assertEqual(parts["closure"]["averageScore"], 95.5)
+        scoped = self.report(self.captain, group_by=("agent",))
+        self.assertEqual(
+            scoped["summary"]["qualityComponents"]["closure"],
+            {"averageScore": None, "scoreCount": 0, "scoreSum": "0.00"},
+        )
+        for row in scoped["breakdown"]["rows"]:
+            self.assertIsNone(
+                row["metrics"]["qualityComponents"]["closure"]["averageScore"]
+            )
+
     def test_date_bounds_are_inclusive_local_calendar_days(self):
         result = self.report(
             date_from=date(2026, 10, 1), date_to=date(2026, 10, 1), group_by=("hour",)

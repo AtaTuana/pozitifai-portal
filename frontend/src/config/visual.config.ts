@@ -6,6 +6,11 @@ export const visualConfig = {
     transitionMs: 1800,
   },
   motion: { authMorphMs: 1600, contentFadeMs: 240 },
+  dashboard: {
+    // Kritik sönümlü yay: küçültmek hareketi ağırlaştırır, büyütmek hızlandırır.
+    springFrequency: 10,
+    filterDebounceMs: 220,
+  },
   // Yükleme kutuları: açılma/kapanma, metin geçişi ve kenar ışığının tur süresi.
   imports: { morphMs: 720, contentFadeMs: 160, borderTravelMs: 2800, cardRadiusPx: 16, gapPx: 20 },
   logo: {
@@ -29,7 +34,7 @@ export const visualConfig = {
     selection: { radiusPx: 19, blurPx: 2, refractionPx: 9, tint: 0.1 },
     workspace: {
       radiusPx: 0,
-      blurPx: 10.2,
+      blurPx: 28,
       refractionPx: 12,
       tint: 0.12,
       veilOpacity: 0.22,

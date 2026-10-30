@@ -60,3 +60,27 @@ Sonraki katman düzeltmesi: navbar camı girişte kaldırıldı; arka üst cam v
 - SQLite ve PostgreSQL için yönetici/kaptan kapsamlarıyla 48 özet, grup sayımı ve birleşik kırılım SQL sorgusu çevrimdışı derlendi. Kontrol sırasında bağlantı açma ve cursor çalıştırma engellendi; bu işlem SQL'in gerçek sunucuda çalıştırıldığı veya sonuçlarının doğrulandığı anlamına gelmez.
 - İzole sentetik veriler için 11 test senaryosu yazıldı: paydalar ve eksikler, kaptan kapsamı, yerel tarih sınırları/saat, güncel takım/geçmişin çoğaltmaması, birleşik filtreler, kırılım sayfalaması, aynı adlı temsilciler, ağırlıklı ortalama, sıfır/boş ayrımı, ondalık kalite toplamı, geçersiz parametreler, oturum/yöntem sınırları ve yetki iptali.
 - Kullanıcının önceki talebi doğrultusunda test paketi, tarayıcı testi veya gerçek rapor API isteği çalıştırılmadı. Test senaryoları yazılmış olmakla birlikte henüz yürütülmedi. Kullanıcının veritabanına, yüklenmiş verilerine veya kaynak dosyalarına işlem uygulanmadı.
+
+## 30 Ekim 2026 — Filtreli dashboard
+
+- Altı widget içinde toplam/ulaşılan çağrı, ulaşma/dönüşüm oranı, konuşma süresi, toplam/alt kalite puanları ve saatlik yoğunluk bağlandı. Kampanya sekmeleri mevcut iş kimliğini gönderir; takım, temsilci ve tarih filtreleri aynı KPI API'sini kullanır.
+- `tsc --noEmit` ve Django sistem kontrolü başarılı. Kalite alt puanlarını içeren 48 özet/kırılım SQL sorgusu SQLite ve PostgreSQL için bağlantı açmadan derlendi.
+- Eksik alt kalite puanlarının bağımsız paydası, sıfır puanın geçerliliği ve kaptan kapsamı için bir test senaryosu eklendi; kullanıcının talebi doğrultusunda yürütülmedi.
+- Test paketi, üretim derlemesi, gerçek rapor isteği, tarayıcı/görsel kontrolü veya FPS ölçümü çalıştırılmadı. Bu nedenle animasyonların belirli cihazdaki akıcılığı doğrulanmış kabul edilmez.
+- Kaynak CSV/TXT/PDF dosyaları, veritabanı kayıtları ve `Report/` değiştirilmedi. Backend değişikliğinin yüklenmesi için çalışan portal sürecinin yeniden başlatılması gerekir; migration gerekmez.
+
+## 30 Ekim 2026 — Formüllü Excel raporu
+
+- Kullanıcının isteğiyle `Report/schematic.xlsx` formüllerle güncellendi; uygulamanın taşınabilir şablonu `backend/portal/reporting/templates/report.xlsx` içine alındı. Summary'nin özgün sütun ölçüleri, birleştirmeleri, yazı tipleri, dolguları, kenarlıkları ve sayfa ayarları XML düzeyinde karşılaştırılarak korundu. Hesaplanmış geçici örneğin görsel önizlemesi incelendi.
+- Kurulu Excel 16.0 build 19127'nin ayrı, görünmeyen bir örneğinde geçici çalışma kitapları kullanıldı. Gerçek açık dosyalara veya veritabanına işlem yapılmadı. Toplam/ulaşılan/belirsiz sayıları, ulaşma/dönüşüm oranları, sıfır/boş süre ayrımı, bağımsız kalite paydaları ve saatlik sayımlar bilinen altı satırlık örneğe karşı doğrulandı; formül hatası bulunmadı.
+- 2024, 2025, 2026 ve 2028 tarihleri, 29 Şubat sınırı, tarihsiz kayıtların dışlanması ve boş filtre kesişimi kontrol edildi. Yeni Excel tablo satırının yardımcı formülleri ve seçim listelerini büyüttüğü; 31.12.2099 23:59:59 kaydının o günün filtresine dahil olduğu doğrulandı. Türkçe Excel'in TEXT tarih biçimi farkı, gün/ay/yılı sayısal parçalarla birleştirerek giderildi.
+- Formüller Excel 2016 işlev kümesiyle sınırlı tutuldu; dinamik dizi veya makro yoktur. Kontrol edilen kurulumun sürüm numarası 16.0'dır; ayrıca bağımsız, sabit bir Excel 2016 kurulumu üzerinde kontrol yapılmış sayılmaz. Önizleme motorunun bazı yapılandırılmış başvuruları değerlendirememesi nedeniyle hesap doğrulaması yerel Excel'de, görsel kontrolü onun hesapladığı değerlerle yapıldı.
+- Django sistem kontrolü ve TypeScript tip kontrolü başarılı. Git diff biçim kontrolü hata vermedi. Test paketi, tarayıcıdan gerçek dosya indirme, üretim derlemesi veya Neon veri sorgusu yürütülmedi; uçtan uca indirme ve yük altındaki performans henüz doğrulanmış değildir.
+- Kaynak Documents dosyaları ve veritabanı kayıtları korunur; migration, commit veya push yapılmadı.
+
+## 30 Ekim 2026 — Excel'de değiştirilebilir varsayılan filtreler
+
+- İndirme, dashboard filtrelerini RawData kapsamından ayırır: RawData tüm yetkili çağrıları içerir; dashboard seçimleri yalnızca Summary'nin dört filtre hücresine yazılır. Rol kapsamı mevcut `selected_calls` üzerinden uygulanır; takım kaptanı için başka takımlar dosyaya eklenmez. Sonuç hücreleri formül olarak kalır.
+- Ayrı, geçici Excel kopyasında altı çağrının tamamı korunurken varsayılan takım/temsilci/kampanya/tarih aralığıyla bir çağrı gösterildi. Filtreleri sıfırlamak altı çağrıyı; başka takım seçmek iki çağrıyı gösterdi. Yalnız başlangıç, yalnız bitiş, aralık ve geçersiz/ters tarih girişleri kontrol edildi. Doğru girişlere dönüldüğünde formül hatası yoktu. Başlangıç tarihi değiştirilemeyen gizli bir kısıt olarak bırakılmadı.
+- Varsayılan tarih aralığının mevcut kutuya sığdığı ve Summary yerleşiminin korunduğu görsel önizlemede kontrol edildi. Kaynak belgeler/veritabanı değiştirilmedi; test paketi veya tarayıcıdan gerçek indirme yürütülmedi.
+- Son kullanıcı kontrolü: eski backend süreci Excel adresine 404 döndürüyordu. Backend yeniden başlatıldıktan sonra kullanıcı portal üzerinden Excel dosyasını başarıyla indirdiğini doğruladı.

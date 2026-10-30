@@ -11,7 +11,12 @@ export class ApiError extends Error {
 }
 
 /** Cookies remain HttpOnly. Only the masked CSRF token is held in JavaScript memory. */
-export async function api<T>(path: string, method = 'GET', payload?: unknown): Promise<T> {
+export async function api<T>(
+  path: string,
+  method = 'GET',
+  payload?: unknown,
+  options: { signal?: AbortSignal } = {},
+): Promise<T> {
   const multipart = payload instanceof FormData;
   let response: Response;
   try {
@@ -24,9 +29,13 @@ export async function api<T>(path: string, method = 'GET', payload?: unknown): P
         ...(method !== 'GET' ? { 'X-CSRFToken': csrf } : {}),
       },
       ...(payload === undefined ? {} : { body: multipart ? payload : JSON.stringify(payload) }),
-      signal: AbortSignal.timeout(multipart ? 120_000 : 15_000),
+      signal: options.signal
+        ? AbortSignal.any([options.signal, AbortSignal.timeout(multipart ? 120_000 : 15_000)])
+        : AbortSignal.timeout(multipart ? 120_000 : 15_000),
     });
   } catch {
+    // A superseded filter request is intentional cancellation, not a connection failure.
+    if (options.signal?.aborted) throw options.signal.reason;
     throw new ApiError(
       'NET001',
       multipart

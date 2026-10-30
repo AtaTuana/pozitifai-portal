@@ -7,6 +7,27 @@ from portal.models import Result
 
 REACHED_IDS = (Result.Id.SALE, Result.Id.REJECTED, Result.Id.CALLBACK)
 KNOWN_IDS = (*REACHED_IDS, Result.Id.UNREACHABLE)
+QUALITY_COMPONENTS = {
+    "greeting": "greeting_score",
+    "needAnalysis": "need_analysis_score",
+    "closure": "closure_score",
+}
+
+
+def component_aggregates():
+    """Each optional subscore has its own denominator; missing scores are never zero."""
+    result = {}
+    for name, field in QUALITY_COMPONENTS.items():
+        path = f"quality_score__{field}"
+        valid = Q(**{f"{path}__gte": 0, f"{path}__lte": 100})
+        result[f"{name}_count"] = Count("quality_score", filter=valid)
+        result[f"{name}_sum_hundredths"] = Sum(
+            Cast(Round(F(path) * 100), BigIntegerField()),
+            filter=valid,
+            default=0,
+            output_field=BigIntegerField(),
+        )
+    return result
 
 
 def aggregates():
@@ -20,6 +41,7 @@ def aggregates():
         Round(F("quality_score__total_score") * 100), BigIntegerField()
     )
     return {
+        **component_aggregates(),
         "total_calls": Count("pk"),
         "sales_calls": Count("pk", filter=Q(result_id=Result.Id.SALE)),
         "rejected_calls": Count("pk", filter=Q(result_id=Result.Id.REJECTED)),
@@ -73,6 +95,19 @@ def metrics(values):
             values["talk_duration_sum"], values["talk_duration_count"]
         ),
         "averageQualityScore": divide(quality_sum, values["quality_count"]),
+        "qualityComponents": {
+            name: {
+                "averageScore": divide(
+                    Decimal(values[f"{name}_sum_hundredths"]) / 100,
+                    values[f"{name}_count"],
+                ),
+                "scoreCount": values[f"{name}_count"],
+                "scoreSum": format(
+                    Decimal(values[f"{name}_sum_hundredths"]) / 100, ".2f"
+                ),
+            }
+            for name in QUALITY_COMPONENTS
+        },
         "basis": {
             "talkSecondsSum": values["talk_duration_sum"],
             "talkDurationCount": values["talk_duration_count"],

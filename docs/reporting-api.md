@@ -1,6 +1,6 @@
 # Rapor hesaplama servisi
 
-`GET /api/reports/kpis` oturum açmış kullanıcı için filtrelenmiş KPI özeti ve isteğe bağlı kırılım döndürür. Dashboard veya Excel tasarımı içermez. Her iki tüketici aynı `portal.reporting.calculate_report` servisini kullanabilir; hesaplar tarayıcıda tekrarlanmaz.
+`GET /api/reports/kpis` oturum açmış kullanıcı için filtrelenmiş KPI özeti ve isteğe bağlı kırılım döndürür. Dashboard bu servisi kullanır; Excel de aynı `portal.reporting.calculate_report` servisini kullanabilir. KPI hesapları tarayıcıda tekrarlanmaz.
 
 ## Filtre ve gruplama sözleşmesi
 
@@ -58,6 +58,8 @@ Eksik boyut anahtarı olan çağrı ilgili kırılıma alınmaz: temsilci için 
 
 Payda sıfırsa oran/ortalama `null`; payda pozitif ve pay sıfırsa sayısal `0` döner. `rateUnit=percent`, oranların 0–100 ölçeğinde olduğunu belirtir. Görünüm için iki basamak gibi bir yuvarlama uygulanmaz; türetilen değerler JSON sayısıdır.
 
+`qualityComponents`, `greeting`, `needAnalysis` ve `closure` nesnelerini içerir. Her biri `averageScore` (0–100 veya null), `scoreCount` ve tam iki ondalıklı `scoreSum` string alanlarına sahiptir. Eksik alt puanlar o bileşenin paydasına katılmaz; sıfır puan geçerlidir. Bu alanlar özet ve bütün kırılımlarda aynı kuralla hesaplanır. Dashboard toplam ve alt kalite puanlarını 10'a bölerek `/10` gösterir; API ölçeği değişmez.
+
 Her metrik nesnesindeki `basis`, yeniden ağırlıklı hesaplama için `talkSecondsSum`, `talkDurationCount`, `qualityScoreSum`, `qualityScoreCount` içerir. Kalite toplamı tam iki ondalıklı bir **string** döner; veritabanında puanlar önce tamsayı yüzde birimlerine çevrilerek toplanır. Böylece SQLite'ın kayan noktalı SUM davranışı toplamı bozmaz. Ortalamalar ve yüzdeler üst gruplarda bu temel toplamlarla yeniden hesaplanır; alt grupların ortalamaları ortalanmaz.
 
 `coverage` alanları: `undatedCalls`, `unknownAgentCalls`, `unassignedTeamCalls`, `missingOrInvalidDurationCalls`, `reachedWithoutDurationCalls`, `withoutUsableQualityCalls`. Bu adetler örtüşebilir; toplanarak sorunlu çağrı sayısı üretilmemelidir. Sıfır saniye ve sıfır kalite geçerli değerlerdir. Ulaşılamayan çağrı süresi konuşma ortalamasına girmez; geçerli kalite puanı kalite ortalamasına girebilir.
@@ -70,6 +72,14 @@ Her metrik nesnesindeki `basis`, yeniden ağırlıklı hesaplama için `talkSeco
 - Bağımsız PostgreSQL çağrısı `REPEATABLE READ, READ ONLY` transaction ile özet ve kırılımı aynı veri görüntüsünden okur. SQLite'ta tek transaction kullanılır. Servisi mevcut transaction içinde çağıran dışa aktarım kodu kendi snapshot/izolasyon politikasından sorumludur.
 - API hesaplamadan sonra filtre/gruplama bilgisini `report.calculated` işlem kaydına yazar; ham konuşma veya rapor satırlarını loga kopyalamaz. Çağrı, kalite, kaynak dosya veya kullanıcı kaydı değiştirilmez.
 - `RPT001`: Parametre/kimlik/gruplama/sayfalama hatası. `RPT002`: Tarih biçimi/aralığı hatası. `RPT003`: Veritabanı işlemi başarısız; bağlantıyı kontrol ederek yeniden deneyin. Giriş ve yetki sorunları mevcut `AUTH001`/`AUTH003` kodlarını kullanır.
-- Bu aşamada dashboard bileşeni, Excel dosyası, LLM sınıflandırması veya sonuç kategorisine göre ek filtre tasarlanmadı. Rapor servisi yeni migration gerektirmez.
+- Excel dosyası, LLM sınıflandırması ve sonuç kategorisine göre ek filtre bu servisten ayrı geliştirilir. Kalite alt puanlarının eklenmesi yeni migration gerektirmez.
+
+## Dashboard
+
+`frontend/src/features/dashboard` özel SVG göstergelerini, filtreleri ve animasyon saatini içerir. Kampanya üst sekmelerden, takım/temsilci/tarih aralığı sayfa içinden seçilir. Tek gün için iki tarih aynı seçilir. Her değişiklikte `groupBy=hour&limit=24` ile özet ve saatlik veriler aynı sunucu görüntüsünden alınır. Hızlı filtre değişiklikleri 220 ms geciktirilir; eski istek iptal edilir ve eski sonuç yeni filtreye aitmiş gibi gösterilmez. Takım kaptanının seçimi kendi takımıyla sınırlıdır; esas yetki kontrolü sunucudadır.
+
+09–18 saatleri boş olsa da gösterilir. Bu aralık dışında gerçek çağrı varsa grafik aralığı genişler; saat bilgisi olmayan çağrılar grafiğe alınmaz ve adedi açıklanır. Saat satırları fare, klavye veya dokunmayla seçilebilir. Kalite ve süre için gözlem yoksa `—` gösterilir.
+
+Animasyonlar `visual.config.ts` içindeki `dashboard.springFrequency` ile ayarlanır. Tek `requestAnimationFrame` döngüsü SVG ve metinleri günceller; React sayfasını her karede yeniden çizmez. Değerler yerleşince döngü durur; azaltılmış hareket tercihi ve arka plandaki sekme animasyonu son değere geçirir. Widget'lar mevcut ortak cam yüzeyini kullanır; ilave WebGL veya ayrı blur katmanları oluşturmaz.
 
 Çalıştırılan kontroller ve çalıştırılmayan senaryolar [doğrulama kaydında](verification.md) ayrıdır.

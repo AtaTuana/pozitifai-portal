@@ -97,3 +97,15 @@ Bu adımlar genel kontroldür; kullanıcının tarayıcı/GPU tanısı incelenme
 **Yükleme alanı görünmüyor:** Takım kaptanı yükleyemez. Çağrı/kalite/transkript için admin veya yönetici; temsilci kadrosu için admin gerekir.
 
 **HTTP 413 / dosya çok büyük:** Portalın tek dosya/toplam sınırlarına uyun. Araya ek bir proxy konduysa onun istek sınırı da dosyayı engelleyebilir.
+
+## Excel raporu
+
+| Kod | Anlamı / çözüm |
+| --- | --- |
+| XLS001 | Rapor şablonu okunamıyor, yapısı değişmiş veya Excel'in desteklemediği bir tarih var. Mesajı inceleyin; `backend/portal/reporting/templates/report.xlsx` dosyasını proje sürümünden geri yükleyin. Kaynak veriye tahmini tarih yazmayın. |
+| XLS002 | Yetkili veri kapsamı 50.000 çağrı sınırını aşıyor. İndirme tüm yetkili veriyi içerdiğinden portal filtresini daraltmak çözmez; dışa aktarma sınırı ve kapasitesi artırılmalıdır. |
+| XLS003 | İndirme bağlantısı kesildi, zaman aşımına uğradı veya yanıt Excel dosyası değil. Portal terminalini kontrol edip yeniden deneyin. |
+| RPT001–RPT002 | Rapor filtreleri geçersiz. Seçimleri ve tarih aralığını kontrol edin. |
+| RPT003 | Veritabanı sorgusu başarısız. Portalı bağlantı değişkenlerinin bulunduğu terminalden başlatın. |
+
+**Excel sayıları güncellenmiyor:** Hesaplama Seçenekleri'ni Otomatik yapın. Elle veri eklediyseniz kayıtların `ReportData` tablosuna dahil olduğundan ve Call Start'ın gerçek Excel tarihi olduğundan emin olun. Yeni veri eski filtre seçimini içermiyorsa filtreleri ilk seçeneklerine döndürün. [Rapor kullanımı](excel-report.md).

@@ -12,6 +12,7 @@ urlpatterns = [
     path("api/planning", planning.planning),
     path("api/workspace", planning.workspace),
     path("api/reports/kpis", reports.kpis),
+    path("api/reports/excel", reports.excel),
     path("api/activity", planning.activity),
     path("api/imports", imports.imports),
     path("api/imports/rules", imports.import_rules),
