@@ -2,10 +2,10 @@
 
 ## Kullanım
 
-1. Portalı PostgreSQL bağlantısının tanımlı olduğu terminalde `npm start` ile yeniden başlatın. Başlatıcı bekleyen `0004` migration'ını uygular. Yeni PowerShell penceresi PG değişkenlerini önceki pencereden devralmaz; [Neon kılavuzundaki](cloud-postgresql.md) bağlantı adımı gerekebilir.
+1. Windows’ta `start.bat` dosyasını açın. Eksik programlar ve Neon bağlantı soruları aynı pencerede tamamlanır; kayıtlı ayarlar sonraki açılışlarda yüklenir. Başlatıcı bağlantıyı kontrol edip bekleyen migration’ları uygular. [İlk kurulum kılavuzu](../README.md#kurulum). Ortak veritabanında veri zaten varsa her bilgisayarda tekrar yüklemek gerekmez.
 2. Admin hesabıyla **Temsilciler → Temsilci kadrosu yükle** bölümünde `agents.csv` seçin. Bu işlem yalnızca dosyada adı geçen temsilcileri ekler/günceller; dosyada olmayanları silmez. Takım planı güncellenir.
-3. **Veri yükleme → Çağrılar** bölümünde `calls.csv` yükleyin. Kaynak dönemini bağımsız olarak biliyorsanız isteğe bağlı tarih alanlarına girin. Bu dönem bir filtre değildir; yalnızca belirsiz tarih yorumlarına kanıt sağlar.
-4. **Kalite değerlendirmeleri** bölümünde `quality_scores.csv` ve uygun puanlama profilini seçin. Bu case için Q1 v1: `0.25 × selamlama + 0.40 × ihtiyaç analizi + 0.35 × kapanış`. Başka bir kaynağa bu profil kanıtsız uygulanmamalıdır.
+3. **Veri yükleme → Calls (Çağrılar)** bölümünde `calls.csv` yükleyin. Kaynak dönemini bağımsız olarak biliyorsanız isteğe bağlı tarih alanlarına girin. Bu dönem bir filtre değildir; yalnızca belirsiz tarih yorumlarına kanıt sağlar.
+4. **Veri yükleme → Quality scores (Kalite değerlendirmeleri)** bölümünde `quality_scores.csv` ve uygun puanlama profilini seçin. Arayüz case profiliyle açılır; yükleyen kişi uygunluğunu kontrol etmelidir. Bu case için Q1 v1: `0.25 × selamlama + 0.40 × ihtiyaç analizi + 0.35 × kapanış`. Başka bir kaynağa bu profil kanıtsız uygulanmamalıdır.
 5. **Transkriptler** bölümünde klasörü veya birden fazla `.txt` dosyasını seçin. Dosya adı çağrı kimliği olmalı: `C100318.txt`. Metin korunur ve çağrıya bağlanır. Bu aşama LLM çağrısı yapmaz.
 6. Yükleme geçmişindeki **İncele** düğmesi özet, kural filtresi ve alan bazında önce/sonra kayıtlarını açar. Ayrıntılar 50 işlem/sayfa; geçmiş 25 yükleme/sayfa olarak alınır.
 

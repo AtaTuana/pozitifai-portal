@@ -1,8 +1,10 @@
 # Neon üzerinde PostgreSQL kurulumu
 
+**Mevcut ortak veritabanını kullanacak Windows kullanıcıları:** yeni Neon projesi oluşturmayın. Proje sahibinden bağlantı bilgilerini alıp `start.bat` sorularına cevap verin; [adım adım kurulum](../README.md#kurulum) yeterlidir. Aşağıdaki teknik rehber bağımsız bir veritabanı kurmak veya elle bağlantı doğrulamak içindir.
+
 Bu kılavuz mevcut Django portalını yeni, boş bir Neon PostgreSQL veritabanına bağlamak içindir. Portal bilgisayarda çalışır; veritabanı cloud'da bulunur. İnternet bağlantısı gerekir. Bu işlem web uygulamasına herkese açık bir internet adresi vermez.
 
-Durum: PostgreSQL seçimi mevcut Django ayarlarında vardır. Bu kılavuz hazırlanırken Neon projesi oluşturulmadı, bağlantı kurulmadı veya cloud migration çalıştırılmadı. Mevcut migration zincirinin çalıştırılmış doğrulaması SQLite üzerindedir; ilk PostgreSQL kurulumu aşağıdaki adımlarda doğrulanacaktır.
+İlk şema doğrulamaları SQLite üzerinde yapıldı; daha sonra proje sahibi Neon bağlantısını kurup tabloları görüntülediğini doğruladı. Bu bilgi bütün PostgreSQL eşzamanlılık senaryolarının test edildiği anlamına gelmez. Güncel kontrol kapsamı [doğrulama kaydında](verification.md) tutulur. Her yeni bağımsız kurulumda bağlantı ve migration durumu yeniden kontrol edilmelidir.
 
 ## Neden bu seçenek?
 
@@ -101,7 +103,7 @@ Başarılı işlemden sonra:
 .\.venv\Scripts\python.exe backend/manage.py showmigrations portal
 ```
 
-Uygulanan migration'lar `[X]` görünür. PostgreSQL üzerinde ilk çalıştırma henüz yapılmadığından bir uyumluluk hatası çıkarsa burada dur ve hatayı incele; `--fake`, tablo silme veya migration kayıtlarını elle değiştirme ile geçişi atlama.
+Uygulanan migration'lar `[X]` görünür. Bu kurulumda bir uyumluluk hatası çıkarsa burada dur ve hatayı incele; `--fake`, tablo silme veya migration kayıtlarını elle değiştirme ile geçişi atlama.
 
 Bu komut yeni şemayı kurar; bilgisayardaki SQLite hesaplarını ve kayıtlarını Neon'a taşımaz. Yerel dosya korunur. Mevcut hesapların aynen taşınması istenirse bu ayrı bir veri aktarımıdır.
 

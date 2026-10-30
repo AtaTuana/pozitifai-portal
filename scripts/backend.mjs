@@ -7,7 +7,12 @@ import { networkInterfaces } from 'node:os';
 
 function run(command, args, root, env = process.env) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { cwd: root, env, stdio: 'inherit', windowsHide: true });
+    const child = spawn(command, args, {
+      cwd: root,
+      env,
+      stdio: 'inherit',
+      windowsHide: true,
+    });
     child.once('error', () =>
       reject(
         new Error('[START006] Python başlatılamadı. Python 3.11–3.14 kurulumunu kontrol edin.'),
@@ -70,12 +75,16 @@ export async function prepareBackend(root, prepareOnly) {
   const stamp = join(root, '.cache', 'python-dependencies.sha256');
   if (
     (await readFile(stamp, 'utf8').catch(() => '')) !== fingerprint ||
-    spawnSync(python, ['-c', 'import django, psycopg, waitress'], { windowsHide: true }).status !==
-      0
+    spawnSync(python, ['-c', 'import django, psycopg, waitress'], {
+      windowsHide: true,
+    }).status !== 0
   ) {
     await run(python, ['-m', 'pip', 'install', '-r', requirements], root);
     await mkdir(join(root, '.cache'), { recursive: true });
     await writeFile(stamp, fingerprint);
+  }
+  if (process.env.PGDATABASE) {
+    await run(python, [join(root, 'backend/manage.py'), 'check_database'], root);
   }
   await run(python, [join(root, 'backend/manage.py'), 'upgrade_database'], root);
   if (!prepareOnly) await run(python, [join(root, 'backend/manage.py'), 'bootstrap_admin'], root);

@@ -1,6 +1,6 @@
 # Veritabanı tasarımı
 
-Portal varsayılan olarak `.local/portal.sqlite3` dosyasına bağlıdır. Ayrı bir veritabanı sunucusu gerekmez. PostgreSQL, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGHOST`, `PGPORT` değişkenleriyle seçilebilir; bu değişikliğin uygulanması ve bütünlük kontrolleri SQLite üzerinde yapılmıştır. PostgreSQL üzerinde çalıştırılmış doğrulama henüz yoktur.
+Windows’taki `start.bat` akışı mevcut Neon PostgreSQL bağlantısını ister ve yerel ayarlardan tekrar kullanır. PostgreSQL seçimini Django’da `PGDATABASE` ve ilgili `PG*` ayarları belirler. Doğrudan Node/Django akışında bu ayarlar yoksa `.local/portal.sqlite3` kullanılır; normal Windows sihirbazı eksik Neon ayarıyla sessizce bu yola geçmez. Yeni tabloyu elle kurmak gerekmez; başlatıcı migration zincirini uygular. Bu şemanın ilk geçiş kontrolleri SQLite üzerinde yapılmıştır; tarihli doğrulama kapsamı [verification.md](verification.md) içindedir.
 
 ## Kimlikler ve alan türleri
 
@@ -42,7 +42,7 @@ Model dosyaları `backend/portal/models/` altında sorumluluklarına göre ayrı
 | `ImportBatch`         | Dosya türü, özgün dosya adı ve baytları, SHA-256, yükleyen, işlem durumu                                                              |
 | `ImportRow`           | Yükleme, satır numarası, özgün alanlar, satır durumu                                                                                  |
 | `ImportIssue`         | Satır, hata kodu, alan, açıklama, çözüm bilgileri                                                                                     |
-| `RejectionCategory`   | Kategori kimliği, adı, tanımı, aktiflik; kullanıcı kategorileri bekleniyor                                                            |
+| `RejectionCategory`   | Kategori kimliği, adı, tanımı, aktiflik; dokuz sürümlü ret kategorisi; ilk analizde kaydedilir                                        |
 | `PromptVersion`       | İsim, sürüm, prompt metni, kullanılan kategori tanımlarının kopyası, hash                                                             |
 | `AnalysisRun`         | Transkript, prompt, sağlayıcı/model, girdinin kopyası ve hash'i, parametreler, cevap, süre/token ölçümleri, durum                     |
 | `AnalysisLabel`       | Analiz, kategori, konuşmadan kanıt, açıklama, birincil sebep işareti                                                                  |

@@ -1,4 +1,6 @@
-# Giriş ve planlama uyarlaması — doğrulama
+# Doğrulama kayıtları
+
+Bu belge tarihli geliştirme kontrolleridir. Her bölüm yalnız kendi aşamasını kapsar; eski bir sonuç sonraki değişikliklerin tamamının doğrulandığı anlamına gelmez.
 
 27 Ekim 2026 tarihinde Windows, Node.js 24, Python 3.12 ve SQLite ile kontrol edildi.
 
@@ -93,3 +95,17 @@ Sonraki katman düzeltmesi: navbar camı girişte kaldırıldı; arka üst cam v
 - Gerçek 25 transkript için uçtan uca sınıflandırma, insan etiketleriyle doğruluk karşılaştırması ve PostgreSQL üzerinde eşzamanlı analiz davranışı doğrulanmış değildir. SQLite testleri PostgreSQL satır kilitlerinin yerini tutmaz.
 - Kullanıcı ekran görüntüleri yeni sayfa yerleşimini gösterir. Bu aşamada otomatik tarayıcı veya cihaz FPS testi yapılmadı. Sidebar ve başlık boşlukları görsel geri bildirime göre düzenlendi.
 - Case kontrolünde zorunlu temsilci sıralaması ekranının eksik olduğu belirlendi. Bu açık nokta README'ye yazıldı; mevcut temsilci listesi performans sıralaması olarak sunulmaz.
+
+## 30 Ekim 2026 — Windows kurulum başlatıcısı
+
+- `start.bat --check-tools`, gerçek Windows PowerShell 5.1 üzerinden çalıştırıldı: `Node.js, npm ve Python hazir.` ve çıkış kodu 0. Bu mod paket kurmaz, ayar dosyasına yazmaz, veritabanına bağlanmaz.
+- Depo dışındaki izole örnek ayarlarla ilk açılış, gizli giriş, OpenAI anahtarını boş bırakma, kayıtlı ayarlarla soru sormadan devam etme, ortam değişkeninin önceliği, yeniden yapılandırmada Enter ile mevcut değeri koruma, yanlış Host ve bozuk JSON kontrol edildi. Örnek bilgiler gerçek kimlik bilgileri değildi.
+- Eksik runtime durumunda kurulum ve tekrar arama akışı taklit kurulum fonksiyonlarıyla kontrol edildi. Mevcut programların tekrar kurulmadığı, kontrol modunun kurulum başlatmadığı doğrulandı. Gerçek WinGet indirme/kurulumunun temiz bir Windows cihazında uçtan uca çalıştığı henüz doğrulanmadı; kurulu Node/Python kaldırılmadı.
+- PowerShell 5.1 sözdizimi, değişen JavaScript dosyaları ve Git fark biçimi kontrol edildi. PostgreSQL bağlantı komutu dört taklit bağlantı durumunda doğrulandı: SQLite için atlama, başarılı `SELECT 1`, beklenmeyen sonuç ve bağlantı hatası. Hata çıktısında taklit hassas bağlantı içeriği yer almadı.
+- Kullanıcının `.local` ayarları değiştirilmedi; gerçek Neon üzerinde migration/veri yazımı, ücretli LLM isteği veya kapsamlı test paketi çalıştırılmadı. Bu kontroller sıfırdan kurulum, canlı API analizi veya bütün rapor sonuçlarının doğrulandığı anlamına gelmez.
+
+## 30 Ekim 2026 — README ve teslim kılavuzu
+
+- Case PDF okunarak README; sıfırdan Windows kurulumu, portal kullanımı, DQ-001–DQ-021 kararları, KPI paydaları, Excel filtreleri, roller, mimari, sınırlar ve eksikler üzerinden yeniden düzenlendi. Kaynak PDF/CSV/TXT belgeleri değiştirilmedi.
+- Prompt metni uygulamanın sürümlü dosyasından README’ye aynen alındı. Ortam alanları için gerçek sır içermeyen `.env.example` eklendi; bu dosyanın otomatik yüklenmediği belirtildi.
+- Eski kurulum/rol anlatımları yardımcı belgelerde güncellendi. Temsilci sıralaması eksikliği, farklı Excel dışa aktarma kapsamı ve ölçülmemiş sınıflandırma/KPI doğruluğu açık bırakıldı.
