@@ -1,4 +1,7 @@
 const paths = {
+  rejections:
+    'M21 11a8 8 0 0 1-8 8H7l-4 3v-6a8 8 0 0 1-1-4 9 9 0 0 1 9-9h2a8 8 0 0 1 8 8ZM7 12v2m4-6v6m4-4v4',
+  headset: 'M4 13V10a8 8 0 0 1 16 0v3M4 11H2v7h4v-7H4Zm16 0h2v7h-4v-7h2Zm0 7v2a2 2 0 0 1-2 2h-5',
   arrow: 'M4 12h15m-6-6 6 6-6 6',
   chevron: 'm9 5 7 7-7 7',
   overview: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',

@@ -66,4 +66,4 @@ Tek dosya en fazla 5 MB, istek toplamı 10 MB, CSV 20.000 veri satırı, transkr
 
 Yükleme senkron çalışır; kullanıcı sonucunu aynı istekten alır. İstemci 120 saniye yanıt bekler. Yanıt kaybolması sunucu işleminin iptal edildiği anlamına gelmez; önce geçmiş yenilenmelidir. Büyük üretim yükleri için arka plan iş kuyruğu bu sürümün kapsamı dışındadır.
 
-KPI hesaplama servisi bu akışın kabul ettiği çağrı/kalite kayıtlarını kullanır; tarih, süre ve kalite eksikliği kuralları sorgularda uygulanır. [Filtreli rapor API'si](reporting-api.md) dashboard gösteriminden bağımsızdır. Excel ve LLM henüz bağlı değildir. Doğrulama sınırları için [verification.md](verification.md) dosyasına bakın.
+KPI hesaplama servisi bu akışın kabul ettiği çağrı/kalite kayıtlarını kullanır; tarih, süre ve kalite eksikliği kuralları sorgularda uygulanır. [Filtreli rapor API'si](reporting-api.md) dashboard gösteriminden bağımsızdır. [Excel çıktısı](excel-report.md) kabul edilen kayıtları kullanır; [ret analizi](rejection-analysis.md) ayrıca kullanıcı isteğiyle başlatılır. Doğrulama sınırları için [verification.md](verification.md) dosyasına bakın.

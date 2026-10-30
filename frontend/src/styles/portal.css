@@ -340,7 +340,8 @@ select:disabled {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  flex-shrink: 0;
+  gap: 4px;
 }
 .operation-button {
   position: relative;
@@ -348,9 +349,10 @@ select:disabled {
   display: flex;
   align-items: center;
   gap: 13px;
-  flex: 0 0 48px;
+  flex: 0 0 auto;
+  min-height: 48px;
   width: 100%;
-  padding: 0 15px;
+  padding: 8px 15px;
   text-align: left;
   font-size: 14px;
   border-radius: 5px;

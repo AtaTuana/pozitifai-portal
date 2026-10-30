@@ -109,3 +109,35 @@ Bu adımlar genel kontroldür; kullanıcının tarayıcı/GPU tanısı incelenme
 | RPT003 | Veritabanı sorgusu başarısız. Portalı bağlantı değişkenlerinin bulunduğu terminalden başlatın. |
 
 **Excel sayıları güncellenmiyor:** Hesaplama Seçenekleri'ni Otomatik yapın. Elle veri eklediyseniz kayıtların `ReportData` tablosuna dahil olduğundan ve Call Start'ın gerçek Excel tarihi olduğundan emin olun. Yeni veri eski filtre seçimini içermiyorsa filtreleri ilk seçeneklerine döndürün. [Rapor kullanımı](excel-report.md).
+
+## Yerel ayarlar ve API bağlantısı
+
+- `START009`: `.local/runtime.json` okunamadı, biçimi geçersiz veya kaydedilemedi. Dosya iznini ve JSON biçimini kontrol edin; dosyanın gizli içeriğini paylaşmayın.
+- `LLM001`: API anahtarı bulunamadı. Anahtarı tanımladığınız terminalde `npm run setup:local` çalıştırın.
+- `LLM002`: Anahtarda boşluk veya geçersiz karakter var; güncel anahtarı yeniden girin.
+- `LLM003`: API bağlantısı/yanıtı başarısız veya zaman aşımı. İnternet bağlantısını kontrol edin. Otomatik tekrar yapılmaz.
+- `401 / token_invalidated`: Kimlik doğrulama reddedildi; bu sonuç model veya kredi kontrolü değildir. Güncel API anahtarını tekrar tanımlayıp kaydedin. Terminaldeki eski değer kayıtlı dosyadan önce gelir; yeni kaydı kullanmak için yeni bir terminal açın veya eski `OPENAI_API_KEY` ortam değişkenini kaldırın.
+- `429`: `api_error_code` kredi/harcama sınırı ile istek sıklığı sınırını ayırır. Hata çözülmeden aynı isteği tekrarlamayın.
+
+Adımlar: [Yerel ayarlar](local-settings.md).
+
+
+## Ret analizi ekranı
+
+| Kod | Açıklama ve işlem |
+| --- | --- |
+| LLM001 | Anahtar backend’e yüklenmemiş. `npm run setup:local` ardından portalı `start.bat` ile yeniden başlatın. |
+| LLM101 | OpenAI anahtarı veya erişim reddedildi. Güncel anahtarı ve proje/model izinlerini kontrol edin. Portal oturumu açık kalır. |
+| LLM102 | Sağlayıcı kotası/hız/kredi sınırı. OpenAI faturalama ve limitlerini kontrol edip bekleyin. |
+| LLM103 | Model isteği başarısız. Model erişimini ve ayarını kontrol edin. |
+| LLM104 | Tamamlanmış ve geçerli kategori yanıtı alınamadı. Kayıt başarı sayılmaz; yeniden deneyebilirsiniz. |
+| LLM105 | Sağlayıcı yanıtı zaman aşımına uğradı. Bağlantıyı kontrol edin. |
+| LLM106 | Model sınıflandırmayı reddetti. Konuşmayı kontrol edin; kategori uydurulmaz. |
+| LLM107 | Tek konuşma 60.000 karakter sınırını aşıyor. Yanlış dosya/birleştirme olmadığını kontrol edin. |
+| LLM108 | Prompt sürümü veya kategoriler kayıtlı sürümle uyuşmuyor. Prompt değişikliğinde sürümü artırın. |
+| REJ001 | Konuşma bulunamadı veya seçili tarih/kampanya/yetki kapsamında değil. |
+| REJ002 | 1.000 konuşma sınırı aşıldı. Tarih aralığını daraltın. |
+| REJ003–REJ004 | Aynı konuşma veya üç paralel işlem zaten çalışıyor. Tamamlanmasını bekleyip sonuçları yenileyin. |
+| REJ005 | Konuşma analiz sırasında güncellendi. Güncel metinle yeniden analiz edin. |
+| REJ006 | Filtre biçimi geçersiz. Tarih ve kampanya seçimini yeniden yapın. |
+| REJ007 | Veritabanı kaydına erişilemedi. Bağlantıyı kontrol edip sonuçları yenileyin; API işlemi bitmiş olabilir. |

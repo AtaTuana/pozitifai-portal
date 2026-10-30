@@ -18,4 +18,4 @@ export type PlanEdge = { source: string; target: string };
 export type Plan = { nodes: PlanNode[]; edges: PlanEdge[]; revision: number };
 export type Position = { x: number; y: number };
 export type View =
-  'workspace' | 'planning' | 'agents' | 'users' | 'activity' | 'profile' | 'imports';
+  'workspace' | 'planning' | 'agents' | 'users' | 'activity' | 'profile' | 'imports' | 'rejections';

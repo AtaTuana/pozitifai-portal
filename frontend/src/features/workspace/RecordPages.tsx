@@ -99,6 +99,8 @@ const actionLabels: Record<string, string> = {
   'import.results_repaired': 'Boş çağrı sonuçları kaynaktan onarıldı',
   'report.calculated': 'Rapor hesaplandı',
   'report.exported': 'Excel raporu indirildi',
+  'rejection.analyzed': 'Ret nedenleri analiz edildi',
+  'rejection.failed': 'Ret analizi tamamlanamadı',
 };
 export function ActivityPage() {
   const [events, setEvents] = useState<Activity[]>([]);

@@ -3,11 +3,13 @@ import { visualConfig } from '../../config/visual.config';
 import { surfacePath } from './surfaceGeometry';
 import type { Flap } from './surfaceGeometry';
 
-/** One clipped glass sheet owns the login, workspace, and campaign flaps. */
+/** Only the selected flap belongs to the front sheet; inactive folders sit behind it. */
 export function AuthGlass({ expanded, onSettled }: { expanded: boolean; onSettled: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const rear = useRef<HTMLDivElement>(null);
   const outline = useRef<SVGPathElement>(null);
+  const rearFolders = useRef<SVGSVGElement>(null);
+  const rearOutline = useRef<SVGPathElement>(null);
   const progress = useRef(0);
   const previousFlaps = useRef<Flap[]>([]);
   const settled = useRef(onSettled);
@@ -22,6 +24,7 @@ export function AuthGlass({ expanded, onSettled }: { expanded: boolean; onSettle
       measureFrame = 0;
     let source = login.getBoundingClientRect();
     let flaps: Flap[] = [];
+    let inactiveFlaps: Flap[] = [];
     const from = progress.current,
       to = expanded ? 1 : 0,
       started =
@@ -46,6 +49,19 @@ export function AuthGlass({ expanded, onSettled }: { expanded: boolean; onSettle
       );
       sheet.style.clipPath = `path("${path}")`;
       outline.current?.setAttribute('d', path);
+      // These silhouettes reuse the rear glass; no extra full-screen blur is computed.
+      const baseline = visualConfig.layout.navbarHeightPx;
+      rearOutline.current?.setAttribute(
+        'd',
+        inactiveFlaps
+          .map(
+            ({ left, right, top }) =>
+              `M ${left - 6} ${baseline + 4} L ${left - 6} ${baseline} Q ${left} ${baseline} ${left} ${baseline - 6} L ${left} ${top + 6} Q ${left} ${top} ${left + 6} ${top} L ${right - 6} ${top} Q ${right} ${top} ${right} ${top + 6} L ${right} ${baseline - 6} Q ${right} ${baseline} ${right + 6} ${baseline} L ${right + 6} ${baseline + 4} Z`,
+          )
+          .join(' '),
+      );
+      if (rearFolders.current) rearFolders.current.style.opacity = String(progress.current);
+
       const h = visualConfig.layout.navbarHeightPx;
       const top = source.top + (h - source.top) * progress.current;
       const rearY =
@@ -62,8 +78,18 @@ export function AuthGlass({ expanded, onSettled }: { expanded: boolean; onSettle
       measureFrame = 0;
       source = login.getBoundingClientRect();
       const nav = document.querySelector('.campaign-nav')?.getBoundingClientRect();
+      inactiveFlaps = nav
+        ? [...document.querySelectorAll('.campaign-tab[aria-pressed="false"]')].flatMap(
+            (button) => {
+              const box = button.getBoundingClientRect();
+              const left = Math.max(nav.left + 6, box.left),
+                right = Math.min(nav.right - 6, box.right);
+              return right - left > 12 ? [{ left, right, top: box.top }] : [];
+            },
+          )
+        : [];
       flaps = nav
-        ? [...document.querySelectorAll('.campaign-tab')].flatMap((button) => {
+        ? [...document.querySelectorAll('.campaign-tab[aria-pressed="true"]')].flatMap((button) => {
             const box = button.getBoundingClientRect();
             const left = Math.max(nav.left + 6, box.left),
               right = Math.min(nav.right - 6, box.right);
@@ -91,7 +117,14 @@ export function AuthGlass({ expanded, onSettled }: { expanded: boolean; onSettle
     const nav = document.querySelector('.campaign-nav');
     if (nav) observer.observe(nav);
     const mutations = new MutationObserver(scheduleMeasure);
-    if (nav) mutations.observe(nav, { childList: true, subtree: true, characterData: true });
+    if (nav)
+      mutations.observe(nav, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ['aria-pressed'],
+      });
     window.addEventListener('resize', scheduleMeasure);
     // Capture scroll from the horizontally scrollable campaign strip too.
     window.addEventListener('scroll', scheduleMeasure, true);
@@ -112,6 +145,9 @@ export function AuthGlass({ expanded, onSettled }: { expanded: boolean; onSettle
   return (
     <>
       <div ref={rear} className="auth-rear-glass" aria-hidden="true" />
+      <svg ref={rearFolders} className="auth-rear-folders" aria-hidden="true">
+        <path ref={rearOutline} />
+      </svg>
       <div ref={ref} className="auth-glass" aria-hidden="true">
         <svg className="sheet-outline">
           <path ref={outline} />

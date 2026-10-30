@@ -84,3 +84,12 @@ Sonraki katman düzeltmesi: navbar camı girişte kaldırıldı; arka üst cam v
 - Ayrı, geçici Excel kopyasında altı çağrının tamamı korunurken varsayılan takım/temsilci/kampanya/tarih aralığıyla bir çağrı gösterildi. Filtreleri sıfırlamak altı çağrıyı; başka takım seçmek iki çağrıyı gösterdi. Yalnız başlangıç, yalnız bitiş, aralık ve geçersiz/ters tarih girişleri kontrol edildi. Doğru girişlere dönüldüğünde formül hatası yoktu. Başlangıç tarihi değiştirilemeyen gizli bir kısıt olarak bırakılmadı.
 - Varsayılan tarih aralığının mevcut kutuya sığdığı ve Summary yerleşiminin korunduğu görsel önizlemede kontrol edildi. Kaynak belgeler/veritabanı değiştirilmedi; test paketi veya tarayıcıdan gerçek indirme yürütülmedi.
 - Son kullanıcı kontrolü: eski backend süreci Excel adresine 404 döndürüyordu. Backend yeniden başlatıldıktan sonra kullanıcı portal üzerinden Excel dosyasını başarıyla indirdiğini doğruladı.
+
+## 30 Ekim 2026 — Ret analizi ve kalıcı yerel ayarlar
+
+- Yeni ret analizi modülü için izole, geçici SQLite veritabanında 10 test geçti. Sağlayıcı yanıtları taklit edildi; testler gerçek API isteği veya kullanıcının veritabanına erişim yapmadı. Yetki/tarih kapsamı, önbellek, konuşmanın değişmesi, bozuk yanıt ve konuşmacı ayrıştırma gibi sınırlar kontrol edildi.
+- Django sistem kontrolü, TypeScript tip kontrolü ve frontend üretim derlemesi başarılı. Bu kayıt özellik geliştirilirken yapılan kontrolleri özetler; son CSS boşluk düzenlemesinden sonra test paketi yeniden çalıştırılmadı.
+- OpenAI bağlantı kontrolü 30 Ekim 2026 06:29 UTC'de HTTP 200 ve tamamlanmış `OK` yanıtı verdi. Bu küçük istek transkript içermedi; sınıflandırma doğruluğunu doğrulamaz.
+- Gerçek 25 transkript için uçtan uca sınıflandırma, insan etiketleriyle doğruluk karşılaştırması ve PostgreSQL üzerinde eşzamanlı analiz davranışı doğrulanmış değildir. SQLite testleri PostgreSQL satır kilitlerinin yerini tutmaz.
+- Kullanıcı ekran görüntüleri yeni sayfa yerleşimini gösterir. Bu aşamada otomatik tarayıcı veya cihaz FPS testi yapılmadı. Sidebar ve başlık boşlukları görsel geri bildirime göre düzenlendi.
+- Case kontrolünde zorunlu temsilci sıralaması ekranının eksik olduğu belirlendi. Bu açık nokta README'ye yazıldı; mevcut temsilci listesi performans sıralaması olarak sunulmaz.

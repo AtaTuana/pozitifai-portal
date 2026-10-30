@@ -97,9 +97,9 @@ Bir çağrı için en fazla bir kalite kaydı ve bir transkript vardır. Kalite 
 
 ## Transkript ve LLM kayıtları
 
-Transkript tek ham metin olarak korunur; `TranscriptTurns` tablosu yoktur. Ayrıştırıcı konuşmacı/sıra bilgisini kodda üretecektir. LLM entegrasyonu ve ayrıştırıcı bu veritabanı adımında uygulanmamıştır.
+Transkript tek ham metin olarak korunur; `TranscriptTurns` tablosu yoktur. `rejection_analysis/transcripts.py` konuşmacı/sıra bilgisini görünüm için kodda üretir. OpenAI entegrasyonu ve kayıtlı sonuç ekranı [ret analizi modülünde](rejection-analysis.md) uygulanmıştır.
 
-Ret kategorileri ve promptlar doldurulmadı. Aynı transkript farklı sağlayıcı/model/prompt ile tekrar değerlendirilebilir. Bir analiz aynı kategoriye iki kez bağlanamaz; en fazla bir birincil sebep vardır. Rapor için transkript başına en fazla bir tamamlanmış analiz seçilebilir. Başarısız çalışma seçilemez.
+Dokuz kategori ve sürümlü prompt, ilk analiz isteğinde kayıt altına alınır. Aynı transkript farklı sağlayıcı/model/prompt ile tekrar değerlendirilebilir. Bir analiz aynı kategoriye iki kez bağlanamaz; en fazla bir birincil sebep vardır. Rapor için transkript başına en fazla bir tamamlanmış analiz seçilebilir. Başarısız çalışma seçilemez.
 
 Analiz girdisi ve kategori tanımlarının sürüm kopyaları bilinçli olarak korunur: transkript ya da kategori tanımı değiştiğinde geçmişte modelin ne gördüğünü açıklayabilmek için gerekir. Hash tek başına eski metni geri getiremez. API anahtarları bu tablolara yazılmaz. Tamamlanan analizler ve kullanılan prompt sürümleri daha sonraki iş akışında değiştirilmeyip yeni sürüm/çalışma oluşturulmalıdır.
 
@@ -119,4 +119,4 @@ Kimlik geçişi otomatik geri migration desteklemez. Geri dönüş gerekirse uyg
 
 ## Bu adımın sınırı
 
-Veritabanı şeması, mevcut hesap/planlama kodu ve CSV/TXT yükleyici bağlanmıştır. `0004` migration'ı tarihsiz çağrılar, yükleme özetleri, temizlenmiş satır alanları ve sürümlü işlem izini ekler. LLM sağlayıcıları, KPI hesapları ve Excel çıktıları sonraki adımlardır. Case dosyaları değiştirilmez veya otomatik olarak içeri aktarılmaz; yetkili kullanıcı yükleme alanından seçer.
+Veritabanı şeması, mevcut hesap/planlama kodu ve CSV/TXT yükleyici bağlanmıştır. `0004` migration'ı tarihsiz çağrılar, yükleme özetleri, temizlenmiş satır alanları ve sürümlü işlem izini ekler. KPI hesapları, formüllü Excel çıktısı ve OpenAI ret analizi bu şemaya bağlıdır. Çalıştırılan kontroller ve sınırları [doğrulama kaydında](verification.md) ayrı belirtilir. Case dosyaları değiştirilmez veya otomatik olarak içeri aktarılmaz; yetkili kullanıcı yükleme alanından seçer.

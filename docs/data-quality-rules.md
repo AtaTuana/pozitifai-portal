@@ -172,6 +172,6 @@ Yükleme API'si ve arayüzü bu katalogla bağlandı:
 3. Kaptanın çağrı kapsamı, tarihten bağımsız olarak temsilcinin güncel takımını kullanır. Bilinmeyen temsilciler hiçbir kaptanın kapsamına girmez.
 4. Q1 açıkça seçilir; başka dosyalara katsayı eğitimi veya otomatik profil tahmini yapılmaz. Kaynak alt puan hassasiyeti kanıtlanmadığı için DQ-016 aralığı kaydeder, tek bir sayı uydurmaz.
 5. DQ-009 yalnızca kullanıcı tarafından belirtilmiş kaynak dönemi ve açık tarihler tek yorumu destekliyorsa çalışır. Bunlar yoksa belirsiz tarih NULL kalır.
-6. [KPI hesaplama servisi](reporting-api.md) temiz kayıtlardan beslenir; tarih/süre/kalite eksikliği kuralları sorgularda uygulanır. Dashboard gösterimi ve Excel çıktısı henüz bağlı değildir.
+6. [KPI hesaplama servisi](reporting-api.md) temiz kayıtlardan beslenir; tarih/süre/kalite eksikliği kuralları sorgularda uygulanır. Dashboard ve formüllü [Excel çıktısı](excel-report.md) bu temiz kayıtlara bağlıdır.
 
 Kaynak case belgeleri ve CSV dosyaları yerinde değiştirilmez. Katalogda önerilen inceleme ve log davranışları, gerçek yükleme sırasında kaynak kayıtların üzerine yazmayı gerektirmez.

@@ -1,0 +1,746 @@
+.rejections-page {
+  --rejection-ease: cubic-bezier(0.22, 0.75, 0.2, 1);
+  width: 100%;
+  max-width: 1460px;
+  margin-inline: auto;
+  color: var(--foreground);
+}
+.rejections-page button {
+  cursor: pointer;
+}
+.rejections-page button:disabled {
+  cursor: default;
+}
+.rejections-page svg {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+.rejection-page-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 28px 0;
+  margin-bottom: 0;
+}
+.rejection-page-heading h1 {
+  margin: 0;
+  font-size: clamp(24px, 2.4vw, 34px);
+  font-weight: 550;
+  letter-spacing: -0.05em;
+}
+.rejection-campaign {
+  color: var(--muted);
+  font-size: 13px;
+  text-align: right;
+}
+.rejection-stage {
+  min-height: 570px;
+}
+.rejection-stage-content {
+  animation: rejection-enter 520ms var(--rejection-ease) both;
+}
+.rejection-stage.is-leaving .rejection-stage-content {
+  animation: rejection-leave 180ms ease-in both;
+  pointer-events: none;
+}
+.rejection-stage.is-backward {
+  --rejection-direction: -1;
+}
+.rejection-select-layout {
+  display: grid;
+  grid-template-columns: minmax(310px, 460px) minmax(230px, 1fr);
+  align-items: center;
+  gap: clamp(30px, 5vw, 90px);
+  padding: clamp(8px, 3vw, 40px);
+}
+.rejection-calendar-surface {
+  border: 1px solid var(--glass-border);
+  border-radius: 26px;
+  background: var(--panel-soft);
+  box-shadow:
+    inset 0 1px 0 var(--line),
+    0 24px 65px rgb(0 0 0 / 5%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 22px;
+}
+.rejection-period {
+  display: flex;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--field);
+  margin-bottom: 24px;
+}
+.rejection-period button {
+  flex: 1;
+  min-height: 42px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+}
+.rejection-period button[aria-pressed='true'] {
+  color: var(--foreground);
+  background: var(--hover);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.rejection-calendar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.rejection-calendar-heading strong {
+  font-size: 17px;
+  font-weight: 500;
+  text-transform: capitalize;
+  letter-spacing: -0.03em;
+}
+.rejection-calendar-heading .icon-button {
+  width: 44px;
+  height: 44px;
+}
+.rejections-page .is-back > svg {
+  transform: rotate(180deg);
+}
+.rejection-weekdays,
+.rejection-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+}
+.rejection-weekdays {
+  margin-bottom: 10px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+.rejection-days button {
+  position: relative;
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  transition: transform 200ms var(--rejection-ease);
+}
+.rejection-days button:hover {
+  background: var(--hover);
+}
+.rejection-days button[data-in-range='true'] {
+  background: var(--field);
+  border-radius: 4px;
+}
+.rejection-days button[data-edge='true'] {
+  border-color: var(--line);
+  border-radius: 10px;
+  background: var(--hover);
+  font-weight: 650;
+}
+.rejection-days button[aria-current='date']::after {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  bottom: 5px;
+  left: calc(50% - 1.5px);
+}
+.rejection-date-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: end;
+  padding-top: 22px;
+}
+.rejection-date-fields label {
+  display: grid;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.rejection-date-fields input {
+  min-width: 0;
+  width: 100%;
+  min-height: 42px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--field);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 12px;
+}
+.rejection-date-fields > span {
+  align-self: center;
+  margin-top: 20px;
+  color: var(--muted);
+}
+.rejection-calendar-hint {
+  min-height: 18px;
+  margin: 18px 0 0;
+  font-size: 11px;
+  text-align: center;
+  color: var(--muted);
+}
+.rejection-selection-summary {
+  max-width: 430px;
+}
+.rejection-eyebrow {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.025em;
+  margin-bottom: 10px;
+}
+.rejection-selection-summary h2 {
+  font-size: clamp(20px, 2.3vw, 30px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  margin: 0 0 30px;
+}
+.rejection-selection-count {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.rejection-selection-count strong {
+  font-size: clamp(60px, 6vw, 90px);
+  font-weight: 400;
+  letter-spacing: -0.07em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.rejection-selection-count span,
+.rejection-subtle {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.rejection-start {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 48px;
+  width: 100%;
+  margin: 30px 0 12px;
+}
+.rejection-start > svg:last-child {
+  margin-left: auto;
+}
+.rejection-note {
+  margin: 18px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.rejection-error {
+  border: 1px solid var(--line);
+  border-left: 3px solid currentColor;
+  border-radius: 10px;
+  background: var(--field);
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.rejection-error p {
+  margin: 0 0 6px;
+}
+.rejection-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  padding: 0 12px 0 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+}
+.rejection-back:hover {
+  color: var(--foreground);
+}
+.rejection-back > span {
+  display: flex;
+}
+.rejection-results,
+.rejection-call-list,
+.rejection-chat {
+  padding: 0 clamp(0px, 2vw, 24px) 24px;
+}
+.rejection-result-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin: 24px 0 36px;
+}
+.rejection-result-heading h2,
+.rejection-chat-heading h2 {
+  margin: 0;
+  font-size: clamp(23px, 2.5vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+.rejection-result-count {
+  display: grid;
+  text-align: right;
+  gap: 4px;
+}
+.rejection-result-count strong {
+  font-size: 42px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+.rejection-result-count span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.rejection-pending {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 0;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.rejection-pending button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rejection-bars {
+  display: grid;
+  gap: 8px;
+}
+.rejection-bar-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 180px) minmax(60px, 1fr) 38px 22px;
+  align-items: center;
+  gap: 20px;
+  min-height: 52px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  text-align: left;
+}
+.rejection-bar-row:hover:not(:disabled) {
+  background: var(--field);
+  border-color: var(--line);
+}
+.rejection-bar-row:disabled {
+  opacity: 0.5;
+}
+.rejection-bar-name {
+  font-size: 13px;
+}
+.rejection-bar-track {
+  height: 24px;
+  background: var(--field);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.rejection-bar-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--foreground) 48%, transparent),
+    var(--foreground)
+  );
+  box-shadow: inset 0 0 0 1px var(--line);
+  transform-origin: left;
+  transform: scaleX(var(--bar-ratio));
+  animation: rejection-bar-grow 1050ms var(--rejection-ease) var(--bar-delay) both;
+}
+.rejection-bar-row strong {
+  text-align: right;
+  font-size: 18px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.rejection-bar-row > svg {
+  width: 16px;
+  color: var(--muted);
+}
+.rejection-conversations {
+  display: grid;
+  gap: 10px;
+}
+.rejection-call {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto 20px;
+  gap: 16px;
+  align-items: center;
+  padding: 20px;
+  min-height: 94px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--field);
+  color: var(--foreground);
+  font: inherit;
+  text-align: left;
+  transition: transform 220ms var(--rejection-ease);
+}
+.rejection-call:hover:not(:disabled) {
+  background: var(--hover);
+  transform: translateX(3px);
+}
+.rejection-call-person,
+.rejection-call-meta {
+  display: grid;
+  gap: 7px;
+}
+.rejection-call strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.rejection-call-person > span,
+.rejection-call-meta > span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.rejection-call-meta {
+  text-align: right;
+}
+.rejection-avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--field);
+}
+.rejection-chat {
+  max-width: 1000px;
+  margin-inline: auto;
+}
+.rejection-chat-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 0 18px;
+}
+.rejection-chat-heading h2 {
+  font-size: 22px;
+}
+.rejection-chat-heading p {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.rejection-chat-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 22px;
+}
+.rejection-chat-labels span {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.rejection-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  list-style: none;
+  margin: 0;
+  padding: 30px 0 10px;
+}
+.rejection-message {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  max-width: 85%;
+}
+.rejection-message .rejection-avatar {
+  width: 32px;
+  height: 32px;
+}
+.rejection-message .rejection-avatar svg {
+  width: 18px;
+}
+.rejection-message.is-agent {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+.rejection-bubble {
+  border: 1px solid var(--line);
+  border-radius: 18px 18px 18px 4px;
+  background: var(--panel-soft);
+  padding: 15px 19px;
+  min-width: 80px;
+}
+.is-agent .rejection-bubble {
+  border-radius: 18px 18px 4px 18px;
+  background: var(--hover);
+}
+.is-unknown .rejection-bubble {
+  border-style: dashed;
+}
+.rejection-speaker {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 550;
+}
+.rejection-bubble p {
+  margin: 7px 0 0;
+  font-size: 14px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.rejection-empty {
+  padding: 60px 0;
+  text-align: center;
+  color: var(--muted);
+}
+.analysis-orb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 560px;
+}
+.analysis-orb-visual {
+  position: relative;
+  width: min(100%, 500px);
+  height: 360px;
+  transition: transform 800ms var(--rejection-ease);
+}
+.analysis-orb canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--foreground);
+}
+.analysis-orb-check {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 92px;
+  height: 92px;
+  transform: translate(-50%, -50%) scale(0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #072f20;
+  opacity: 0;
+  transition:
+    transform 350ms var(--rejection-ease),
+    opacity 220ms ease;
+}
+.analysis-orb-check svg {
+  width: 42px;
+  height: 42px;
+  stroke-width: 1.7;
+}
+.analysis-orb-status {
+  text-align: center;
+  min-height: 70px;
+  transition: transform 800ms var(--rejection-ease);
+}
+.analysis-orb-status h2 {
+  margin: 0;
+  font-weight: 450;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+}
+.analysis-orb-status p {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.analysis-orb.is-fused .analysis-orb-check {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.analysis-orb.is-fused .analysis-orb-visual {
+  transform: translateY(-32px);
+}
+.analysis-orb.is-fused .analysis-orb-status {
+  transform: translateY(-100px);
+}
+.analysis-orb.is-fused {
+  animation: rejection-success-fade 400ms ease 1200ms both;
+}
+@keyframes rejection-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(calc(22px * var(--rejection-direction, 1)), 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes rejection-leave {
+  to {
+    opacity: 0;
+    transform: translate3d(calc(-12px * var(--rejection-direction, 1)), -4px, 0);
+  }
+}
+@keyframes rejection-bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(var(--bar-ratio));
+  }
+}
+@keyframes rejection-success-fade {
+  to {
+    opacity: 0;
+  }
+}
+@media (max-width: 1100px) {
+  .rejection-select-layout {
+    gap: 28px;
+    padding: 8px 0;
+    grid-template-columns: minmax(300px, 420px) minmax(200px, 1fr);
+  }
+  .rejection-calendar-surface {
+    padding: 16px;
+  }
+}
+@media (max-width: 900px) {
+  .rejection-select-layout {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 470px;
+    margin-inline: auto;
+  }
+  .rejection-selection-summary {
+    max-width: none;
+    padding: 12px 8px 24px;
+  }
+  .rejection-selection-summary h2 {
+    margin-bottom: 18px;
+  }
+  .rejection-selection-count strong {
+    font-size: 54px;
+  }
+  .rejection-bar-row {
+    grid-template-columns: 130px minmax(40px, 1fr) 28px 14px;
+    gap: 10px;
+    padding-inline: 4px;
+  }
+}
+@media (max-width: 768px) {
+  .rejection-page-heading {
+    padding: 24px 16px 0;
+  }
+}
+@media (max-width: 520px) {
+  .rejection-page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .rejection-calendar-surface {
+    padding: 12px;
+  }
+  .rejection-days {
+    gap: 1px;
+  }
+  .rejection-days button {
+    min-height: 42px;
+  }
+  .rejection-bar-row {
+    grid-template-columns: minmax(0, 1fr) 28px 14px;
+    gap: 8px;
+    padding-block: 10px;
+  }
+  .rejection-bar-name {
+    grid-column: 1;
+  }
+  .rejection-bar-track {
+    grid-column: 1;
+    grid-row: 2;
+    height: 18px;
+  }
+  .rejection-bar-row strong {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .rejection-bar-row > svg {
+    grid-column: 3;
+    grid-row: 2;
+  }
+  .rejection-call {
+    grid-template-columns: 32px minmax(0, 1fr) 16px;
+    padding: 14px;
+    gap: 10px;
+  }
+  .rejection-call > .rejection-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  .rejection-call-meta {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: left;
+  }
+  .rejection-call > svg {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+  .rejection-message {
+    max-width: 95%;
+    gap: 7px;
+  }
+  .rejection-bubble {
+    padding: 12px 14px;
+  }
+  .rejection-bubble p {
+    font-size: 13px;
+  }
+  .rejection-result-heading {
+    gap: 12px;
+  }
+  .analysis-orb-visual {
+    height: 300px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rejections-page *,
+  .rejections-page *::before,
+  .rejections-page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .rejection-stage.is-leaving {
+    opacity: 1;
+  }
+}

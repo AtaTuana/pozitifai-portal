@@ -15,9 +15,10 @@ export async function api<T>(
   path: string,
   method = 'GET',
   payload?: unknown,
-  options: { signal?: AbortSignal } = {},
+  options: { signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<T> {
   const multipart = payload instanceof FormData;
+  const timeout = options.timeoutMs ?? (multipart ? 120_000 : 15_000);
   let response: Response;
   try {
     response = await fetch(`/api${path}`, {
@@ -30,8 +31,8 @@ export async function api<T>(
       },
       ...(payload === undefined ? {} : { body: multipart ? payload : JSON.stringify(payload) }),
       signal: options.signal
-        ? AbortSignal.any([options.signal, AbortSignal.timeout(multipart ? 120_000 : 15_000)])
-        : AbortSignal.timeout(multipart ? 120_000 : 15_000),
+        ? AbortSignal.any([options.signal, AbortSignal.timeout(timeout)])
+        : AbortSignal.timeout(timeout),
     });
   } catch {
     // A superseded filter request is intentional cancellation, not a connection failure.

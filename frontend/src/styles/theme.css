@@ -68,7 +68,7 @@
 .icon-button {
   transition-property: opacity, transform;
 }
-/* One clipped sheet owns the workspace and its flaps; sidebar is content on that sheet. */
+/* The front sheet owns the selected flap; inactive folders are on the rear layer. */
 .auth-glass {
   position: fixed;
   inset: 0;
@@ -168,4 +168,26 @@
   backdrop-filter: blur(var(--rear-glass-blur));
   -webkit-backdrop-filter: blur(var(--rear-glass-blur));
   transform: translate3d(0, -100%, 0);
+}
+
+/* Inactive campaigns are separate, lower folders behind the selected front sheet. */
+.auth-rear-folders {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 18;
+  width: 100%;
+  height: var(--header-height);
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  fill: var(--field);
+  stroke: var(--line);
+  stroke-width: 1.25;
+}
+.campaign-tab[aria-pressed='false'] {
+  margin-top: 8px;
+  color: var(--muted);
+}
+.campaign-tab[aria-pressed='false']:hover {
+  color: var(--foreground);
 }

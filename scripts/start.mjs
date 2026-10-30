@@ -6,14 +6,15 @@ import { createServer } from 'node:net';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { prepareBackend, startBackend } from './backend.mjs';
+import { loadLocalConfig } from './local-config.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const cacheDirectory = join(root, '.cache');
 const stampFile = join(cacheDirectory, 'dependencies.sha256');
 const viteEntry = join(root, 'node_modules', 'vite', 'bin', 'vite.js');
 const args = new Set(process.argv.slice(2));
-const port = Number(process.env.PORT || 5173);
-const apiPort = Number(process.env.API_PORT || 8000);
+let port;
+let apiPort;
 
 /** Carry an actionable code from a failed setup step to the terminal and troubleshooting guide. */
 function failure(code, message) {
@@ -146,6 +147,9 @@ async function startPortal(python) {
 }
 
 try {
+  loadLocalConfig(root);
+  port = Number(process.env.PORT || 5173);
+  apiPort = Number(process.env.API_PORT || 8000);
   validateEnvironment();
   if (!args.has('--prepare-only')) {
     await checkPort();

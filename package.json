@@ -17,7 +17,9 @@
     "preview": "npm run preview --workspace=@pozitifai/frontend",
     "start": "node scripts/start.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "setup:local": "node scripts/setup-local.mjs",
+    "check:openai": "node scripts/check-openai.mjs"
   },
   "devDependencies": {
     "prettier": "3.9.10"

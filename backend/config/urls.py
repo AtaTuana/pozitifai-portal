@@ -1,5 +1,6 @@
 from django.urls import path
 from portal import accounts, planning, imports, reports
+from portal.rejection_analysis import views as rejections
 
 urlpatterns = [
     path("api/session", accounts.session),
@@ -13,6 +14,9 @@ urlpatterns = [
     path("api/workspace", planning.workspace),
     path("api/reports/kpis", reports.kpis),
     path("api/reports/excel", reports.excel),
+    path("api/rejections", rejections.overview),
+    path("api/rejections/analyze", rejections.analyze),
+    path("api/rejections/<str:call_id>", rejections.detail),
     path("api/activity", planning.activity),
     path("api/imports", imports.imports),
     path("api/imports/rules", imports.import_rules),

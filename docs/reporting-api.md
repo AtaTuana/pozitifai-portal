@@ -72,7 +72,7 @@ Her metrik nesnesindeki `basis`, yeniden ağırlıklı hesaplama için `talkSeco
 - Bağımsız PostgreSQL çağrısı `REPEATABLE READ, READ ONLY` transaction ile özet ve kırılımı aynı veri görüntüsünden okur. SQLite'ta tek transaction kullanılır. Servisi mevcut transaction içinde çağıran dışa aktarım kodu kendi snapshot/izolasyon politikasından sorumludur.
 - API hesaplamadan sonra filtre/gruplama bilgisini `report.calculated` işlem kaydına yazar; ham konuşma veya rapor satırlarını loga kopyalamaz. Çağrı, kalite, kaynak dosya veya kullanıcı kaydı değiştirilmez.
 - `RPT001`: Parametre/kimlik/gruplama/sayfalama hatası. `RPT002`: Tarih biçimi/aralığı hatası. `RPT003`: Veritabanı işlemi başarısız; bağlantıyı kontrol ederek yeniden deneyin. Giriş ve yetki sorunları mevcut `AUTH001`/`AUTH003` kodlarını kullanır.
-- Excel dosyası, LLM sınıflandırması ve sonuç kategorisine göre ek filtre bu servisten ayrı geliştirilir. Kalite alt puanlarının eklenmesi yeni migration gerektirmez.
+- Excel üretimi ve LLM sınıflandırması ayrı modüllerde uygulanmıştır. Ret kategorisi bu KPI servisinin filtrelerinden biri değildir. Kalite alt puanlarının eklenmesi yeni migration gerektirmez.
 
 ## Dashboard
 
