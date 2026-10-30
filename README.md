@@ -751,8 +751,8 @@ Tarihli kayıtlar [verification.md](docs/verification.md) içindedir. Eski bir t
 - Geliştirme aşamalarında TypeScript/Django kontrolleri ve frontend derlemesi çalıştırıldı. Ret analizi için taklit sağlayıcıyla izole SQLite üzerinde 10 test geçti.
 - Windows başlatıcısının mevcut programları bulması, ayar soruları, kayıt önceliği, anahtarı atlama ve güvenli hata davranışı odaklı kontrollerden geçti. **Sıfırdan temiz Windows cihazında otomatik program kurulumunun tamamı henüz denenmedi.**
 - Excel formülleri geçici örneklerle kurulu Excel 16.0 üzerinde kontrol edildi; kullanıcı portal üzerinden dosyayı indirdiğini doğruladı. Ayrı, sabit bir Excel 2016 kurulumu üzerinde bağımsız uçtan uca test yapılmış sayılmaz.
-- OpenAI bağlantısı küçük bir istekle doğrulandı. **25 gerçek transkriptin tamamının insan etiketleriyle doğruluk karşılaştırması yapılmadı.**
-- **Case veri setindeki tüm KPI'lar için bağımsız beklenen-sonuç karşılaştırması tamamlanmadı.** Karşı tarafın referans sayılarıyla eşleşme garantisi verilmez.
+- Neon’da kayıtlı 25 tamamlanmış ret analizi, proje sahibinin referans etiketleriyle yalnızca okunarak karşılaştırıldı: **24/25 konuşmada etiket kümesi birebir eşleşti (%96)**. Bir konuşmada fazladan “Rakip Firma” etiketi vardı. Bu küçük örneklemdeki sonuç genel doğruluk garantisi değildir; yeni ücretli API isteği gönderilmedi.
+- Kaynak CSV’ler geçici SQLite’a aktarıldı; temizlenmiş satırlardan SQL toplama kodunu kullanmadan hesaplanan Python sonuçlarıyla **357 özet/kırılım/profil karşılaştırması geçti**. Tarih/takım/temsilci/kampanya filtreleri, saatlik dağılım ve boş seçim kapsandı. Bu kontrol toplama ve filtreleri doğrular; temizleme kararları için bağımsız bir referans veri setinin veya firmanın beklenen sayılarının yerini tutmaz.
 - PostgreSQL üzerinde eşzamanlı analiz kilitleri, temiz cihaz kurulumu, gerçek cihaz performansı ve HTTPS üretim dağıtımı için ayrı uçtan uca doğrulama hâlâ gerekir.
 
 ### Bilinçli kapsam ve çalışma sınırları
